@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Text;
+using MiniHttp.Processors;
 using MiniHttp.RequestHandlers;
 using MiniHttp.Server;
 
@@ -13,8 +10,11 @@ namespace MiniHttp
     {
         static void Main(string[] args)
         {
+            var webroot = new DirectoryInfo(Environment.CurrentDirectory);
             var server = new HttpServer();
-            server.RegisterRoute(@".*", new StaticFileHandler(new DirectoryInfo(Environment.CurrentDirectory)));
+
+            server.RegisterRoute(@"\.html$", new ProcessingFileHandler(webroot).AddProcessor(new TemplateProcessor()));
+            server.RegisterRoute(@".*", new StaticFileHandler(webroot));
             server.RegisterRoute(@".*", new NotFoundHandler());
             server.Start();
 
@@ -24,6 +24,5 @@ namespace MiniHttp
 
             server.Stop();
         }
-
     }
 }
