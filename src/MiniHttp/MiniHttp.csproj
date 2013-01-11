@@ -45,9 +45,21 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestHandlers\Processing\FileSourceResolver.cs" />
+    <Compile Include="RequestHandlers\Processing\Results\Identity.cs" />
+    <Compile Include="RequestHandlers\Processing\Results\Insert.cs" />
+    <Compile Include="RequestHandlers\Processing\IProcessor.cs" />
+    <Compile Include="RequestHandlers\Processing\ISourceResolver.cs" />
+    <Compile Include="RequestHandlers\Processing\Line.cs" />
+    <Compile Include="RequestHandlers\Processing\LineSource.cs" />
     <Compile Include="RequestHandlers\NotFoundHandler.cs" />
     <Compile Include="RequestHandlers\ProcessingFileHandler.cs" />
+    <Compile Include="RequestHandlers\Processing\IProcessingResult.cs" />
+    <Compile Include="RequestHandlers\Processing\Results\Resume.cs" />
     <Compile Include="RequestHandlers\StaticFileHandler.cs" />
+    <Compile Include="RequestHandlers\Processing\StreamLineSource.cs" />
+    <Compile Include="RequestHandlers\Processing\Results\Suppress.cs" />
+    <Compile Include="RequestHandlers\Processing\Results\Transform.cs" />
     <Compile Include="Server\HttpServer.cs" />
     <Compile Include="Server\IRequest.cs" />
     <Compile Include="Server\IRequestHandler.cs" />

@@ -4,16 +4,25 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using MiniHttp.Server;
+using MiniHttp.RequestHandlers.Processing;
 
 namespace MiniHttp.RequestHandlers
 {
     public class ProcessingFileHandler : IRequestHandler
     {
         private readonly DirectoryInfo _rootDir;
+        private readonly List<IProcessor> _processors;
 
         public ProcessingFileHandler(DirectoryInfo rootDir)
         {
             _rootDir = rootDir;
+            _processors = new List<IProcessor>();
+        }
+
+        public ProcessingFileHandler AddProcessor(IProcessor processor)
+        {
+            _processors.Add(processor);
+            return this;
         }
 
         protected virtual FileInfo MapPath(string relativePath)
@@ -23,8 +32,22 @@ namespace MiniHttp.RequestHandlers
 
         protected virtual Stream Process(FileInfo input)
         {
-            // this will of course change
-            return input.OpenRead();
+            var resolver = new FileSourceResolver(input);
+            var source = new StreamLineSource(input.OpenRead(), resolver);
+            var output = new MemoryStream();
+            var writer = new StreamWriter(output);
+
+            var enumerator = source.GetEnumerator();
+            while (enumerator.MoveNext())
+            {
+                var result = _processors.Aggregate(enumerator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(enumerator));
+                if (result != null)
+                    writer.WriteLine(result);
+            }
+            
+            writer.Flush();
+            output.Seek(0, SeekOrigin.Begin);
+            return output;
         }
 
         #region IRequestHandler Members
