@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MiniHttp.RequestHandlers.Processing
 {
-    public abstract class LineSource
+    public abstract class LineSource : IDisposable
     {
         public ISourceResolver Resolver { get; private set; }
 
@@ -39,9 +39,12 @@ namespace MiniHttp.RequestHandlers.Processing
                 _currentEnumerator.Push(source.GetLineEnumerator());
             }
 
-            public void Insert(LineSource source)
+            public void Insert(LineSource source, bool disposeWhenDone = true)
             {
-                _currentEnumerator.Push(source.GetLineEnumerator());
+                var enumerator = source.GetLineEnumerator();
+                if (disposeWhenDone)
+                    enumerator = new DisposingEnumerator<Line>(enumerator, new [] { source });
+                _currentEnumerator.Push(enumerator);
             }
 
             public void Flip()
@@ -105,6 +108,89 @@ namespace MiniHttp.RequestHandlers.Processing
             }
 
             #endregion
+
+            private class DisposingEnumerator<T> : IEnumerator<T>
+            {
+                private readonly IEnumerator<T> _enumerator;
+                private readonly IEnumerable<IDisposable> _disposables;
+
+                public DisposingEnumerator(IEnumerator<T> enumerator, IEnumerable<IDisposable> disposables)
+                {
+                    _enumerator = enumerator;
+                    _disposables = disposables;
+                }
+
+                #region IEnumerator<T> Members
+
+                public T Current
+                {
+                    get { return _enumerator.Current; }
+                }
+
+                #endregion
+
+                #region IDisposable Members
+
+                public void Dispose()
+                {
+                    Dispose(true);
+                }
+
+                private void Dispose(bool disposing)
+                {
+                    if (disposing)
+                    {
+                        _enumerator.Dispose();
+                        foreach (var disposable in _disposables)
+                        {
+                            disposable.Dispose();
+                        }
+                    }
+                }
+
+                ~DisposingEnumerator()
+                {
+                    Dispose(false);
+                }
+
+                #endregion
+
+                #region IEnumerator Members
+
+                object System.Collections.IEnumerator.Current
+                {
+                    get { return Current; }
+                }
+
+                public bool MoveNext()
+                {
+                    return _enumerator.MoveNext();
+                }
+
+                public void Reset()
+                {
+                    _enumerator.Reset();
+                }
+
+                #endregion
+            }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {}
+
+        ~LineSource()
+        {
+            Dispose(false);
         }
 
         #endregion

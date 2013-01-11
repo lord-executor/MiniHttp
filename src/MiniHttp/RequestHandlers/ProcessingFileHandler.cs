@@ -33,18 +33,20 @@ namespace MiniHttp.RequestHandlers
         protected virtual Stream Process(FileInfo input)
         {
             var resolver = new FileSourceResolver(input);
-            var source = new StreamLineSource(input.OpenRead(), resolver);
             var output = new MemoryStream();
             var writer = new StreamWriter(output);
 
-            var enumerator = source.GetEnumerator();
-            while (enumerator.MoveNext())
+            using (var source = new StreamLineSource(input.OpenRead(), resolver))
             {
-                var result = _processors.Aggregate(enumerator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(enumerator));
-                if (result != null)
-                    writer.WriteLine(result);
+                var enumerator = source.GetEnumerator();
+                while (enumerator.MoveNext())
+                {
+                    var result = _processors.Aggregate(enumerator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(enumerator));
+                    if (result != null)
+                        writer.WriteLine(result);
+                }
             }
-            
+
             writer.Flush();
             output.Seek(0, SeekOrigin.Begin);
             return output;
@@ -59,7 +61,10 @@ namespace MiniHttp.RequestHandlers
                 return false;
             
             context.Response.ContentType = MimeTypes.GetMimeType(file.Extension);
-            Process(file).CopyTo(context.Response.OutputStream);
+            using (var content = Process(file))
+            {
+                content.CopyTo(context.Response.OutputStream);
+            }
             
             return true;
         }
