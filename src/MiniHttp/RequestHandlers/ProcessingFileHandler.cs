@@ -11,17 +11,17 @@ namespace MiniHttp.RequestHandlers
     public class ProcessingFileHandler : IRequestHandler
     {
         private readonly DirectoryInfo _rootDir;
-        private readonly List<IProcessor> _processors;
+        private readonly List<Func<IProcessor>> _processorFactories;
 
         public ProcessingFileHandler(DirectoryInfo rootDir)
         {
             _rootDir = rootDir;
-            _processors = new List<IProcessor>();
+			_processorFactories = new List<Func<IProcessor>>();
         }
 
-        public ProcessingFileHandler AddProcessor(IProcessor processor)
+		public ProcessingFileHandler AddProcessor(Func<IProcessor> processor)
         {
-            _processors.Add(processor);
+            _processorFactories.Add(processor);
             return this;
         }
 
@@ -35,13 +35,14 @@ namespace MiniHttp.RequestHandlers
             var resolver = new FileSourceResolver(input);
             var output = new MemoryStream();
             var writer = new StreamWriter(output);
+			var processors = _processorFactories.Select(f => f()).ToList();
 
             using (var source = new StreamLineSource(input.OpenRead(), resolver))
             {
                 var enumerator = source.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
-                    var result = _processors.Aggregate(enumerator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(enumerator));
+					var result = processors.Aggregate(enumerator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(enumerator));
                     if (result != null)
                         writer.WriteLine(result);
                 }

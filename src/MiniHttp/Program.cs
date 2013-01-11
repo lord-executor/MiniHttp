@@ -13,7 +13,7 @@ namespace MiniHttp
             var webroot = new DirectoryInfo(Environment.CurrentDirectory);
             var server = new HttpServer();
 
-            server.RegisterRoute(@"\.html$", new ProcessingFileHandler(webroot).AddProcessor(new TemplateProcessor()));
+            server.RegisterRoute(@"\.html$", new ProcessingFileHandler(webroot).AddProcessor(() => new TemplateProcessor()));
             server.RegisterRoute(@".*", new StaticFileHandler(webroot));
             server.RegisterRoute(@".*", new NotFoundHandler());
             server.Start();
