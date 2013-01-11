@@ -15,10 +15,10 @@ namespace MiniHttp.Server
         private readonly List<RouteDefinition> _routes;
         private bool _running = false;
 
-        public HttpServer()
+        public HttpServer(int port)
         {
             _listener = new HttpListener();
-            _listener.Prefixes.Add("http://+:8888/");
+            _listener.Prefixes.Add(String.Format("http://+:{0}/", port));
 
             _dispatcherThread = new Thread(Dispatch);
             _routes = new List<RouteDefinition>();
