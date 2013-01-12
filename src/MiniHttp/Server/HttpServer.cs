@@ -13,12 +13,14 @@ namespace MiniHttp.Server
         private readonly HttpListener _listener;
         private readonly Thread _dispatcherThread;
         private readonly List<RouteDefinition> _routes;
-        private bool _running = false;
+
+		public string ListenerPrefix { get; private set; }
 
         public HttpServer(int port)
         {
+			ListenerPrefix = String.Format("http://+:{0}/", port);
             _listener = new HttpListener();
-            _listener.Prefixes.Add(String.Format("http://+:{0}/", port));
+			_listener.Prefixes.Add(ListenerPrefix);
 
             _dispatcherThread = new Thread(Dispatch);
             _routes = new List<RouteDefinition>();
@@ -26,23 +28,21 @@ namespace MiniHttp.Server
 
         public void Start()
         {
-            if (_running)
+            if (_listener.IsListening)
                 throw new Exception("Already running");
-            _running = true;
             _listener.Start();
             _dispatcherThread.Start();
         }
 
         public void Stop()
         {
-            _running = false;
             _listener.Stop(); // stopping the listener causes an exception in the dispatcher
             _dispatcherThread.Join(5000);
         }
 
         public void RegisterRoute(string pathExpression, RequestHandler handler)
         {
-            if (_running)
+			if (_listener.IsListening)
                 throw new Exception("Already running");
 
             _routes.Add(new RouteDefinition(new Regex(pathExpression), handler));
@@ -55,7 +55,7 @@ namespace MiniHttp.Server
 
         private void Dispatch()
         {
-            while (_running)
+			while (_listener.IsListening)
             {
                 try
                 {
@@ -64,7 +64,7 @@ namespace MiniHttp.Server
                 }
                 catch (Exception e)
                 {
-                    if (_running)
+					if (_listener.IsListening)
                         Console.WriteLine(e);
                 }
             }
