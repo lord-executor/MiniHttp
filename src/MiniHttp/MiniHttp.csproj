@@ -45,7 +45,14 @@
   <ItemGroup>
     <Compile Include="Arguments.cs" />
     <Compile Include="NDesk.Options\Options.cs" />
+    <Compile Include="Processors\BasicCommandProcessor.cs" />
+    <Compile Include="Processors\Commands\Command.cs" />
+    <Compile Include="Processors\Commands\CommandExtractor.cs" />
+    <Compile Include="Processors\Commands\Content.cs" />
+    <Compile Include="Processors\Commands\ILineSegment.cs" />
+    <Compile Include="Processors\Commands\ILineSegmentHandler.cs" />
     <Compile Include="Processors\TemplateProcessor.cs" />
+    <Compile Include="Processors\VariableProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandlers\Processing\FileSourceResolver.cs" />
