@@ -9,3 +9,17 @@ header,footer { background-color: hsv((1 * @hueStep), 1, 1); padding: 0 10px; }
 .block { background-color: hsv((3 * @hueStep), 1, 1); padding: 0 10px; }
 .blocktemplate { background-color: hsv((4 * @hueStep), 1, 1); padding: 0 10px; }
 .blocktemplate .block { background-color: hsv((5 * @hueStep), 1, 1); padding: 0 10px; }
+
+
+.var-context {
+	padding: 10px 10px;
+	&.level-1 { background-color: hsv((1 * @hueStep), 1, 1); }
+	&.level-2 { background-color: hsv((2 * @hueStep), 1, 1); }
+	&.level-3 { background-color: hsv((3 * @hueStep), 1, 1); }
+	&.level-4 { background-color: hsv((4 * @hueStep), 1, 1); }
+	ul { margin-top: 5px; margin-bottom: 5px; }
+}
+.var-declaration {
+	margin: 0 0 5px 0;
+	background-color: #EEEEEE;
+}
