@@ -8,12 +8,12 @@ namespace MiniHttp.Processors.Commands
 	public class Command
 	{
 		public string Name { get; private set; }
-		public string Argument { get; private set; }
+		public IList<string> Arguments { get; private set; }
 
-		public Command(string command, string argument)
+		public Command(string command, IList<string> arguments)
 		{
 			Name = command;
-			Argument = argument;
+			Arguments = arguments;
 		}
 	}
 }

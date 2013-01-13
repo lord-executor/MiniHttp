@@ -27,7 +27,7 @@ namespace MiniHttp.Processors
 
 		private IProcessingResult InsertCommand(Line line, Command command)
 		{
-			return Insert(line.CreateSource(command.Argument));
+			return Insert(line.CreateSource(command.Arguments.Single()));
 		}
 
 		private IProcessingResult ResumeCommand(Command command)
