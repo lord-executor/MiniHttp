@@ -46,7 +46,7 @@ namespace MiniHttp.Processors
 
 		public abstract TResult HandleContent(Content content);
 
-		public virtual IProcessingResult Aggregate(IEnumerable<TResult> results)
+		protected virtual IProcessingResult Aggregate(IEnumerable<TResult> results)
 		{
 			var transformedLine = String.Concat(results);
 			if (SuppressEmptyLines && String.IsNullOrWhiteSpace(transformedLine))

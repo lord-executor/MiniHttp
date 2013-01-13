@@ -4,32 +4,45 @@ using System.Linq;
 using System.Text;
 using MiniHttp.RequestHandlers.Processing;
 using System.Text.RegularExpressions;
+using MiniHttp.Processors.Commands;
 
 namespace MiniHttp.Processors
 {
-    public class TemplateProcessor : Processor
+    public class TemplateProcessor : BasicCommandProcessor<IProcessingResult>
     {
-        private static readonly Regex ProcessorDirectiveExp = new Regex(@"^\s*@(\w+)\(([^)]*)\)\s*$");
+		private Line _currentLine;
+
+		public TemplateProcessor()
+		{
+			RegisterCommand("template", c => InsertCommand(_currentLine, c));
+			RegisterCommand("import", c => InsertCommand(_currentLine, c));
+			RegisterCommand("content", ResumeCommand);
+		}
 
         protected override IProcessingResult ProcessLine(Line line)
         {
-            var match = ProcessorDirectiveExp.Match(line.Value);
-            if (match.Success)
-            {
-                var command = match.Groups[1].Value;
-                var argument = match.Groups[2].Value;
-
-                switch (command)
-                {
-                    case "template":
-                    case "import":
-                        return Insert(line.CreateSource(argument));
-                    case "content":
-                        return Resume();
-                }
-            }
-
-            return Identity();
+			_currentLine = line;
+			return base.ProcessLine(line);
         }
-    }
+
+		private IProcessingResult InsertCommand(Line line, Command command)
+		{
+			return Insert(line.CreateSource(command.Argument));
+		}
+
+		private IProcessingResult ResumeCommand(Command command)
+		{
+			return Resume();
+		}
+
+		public override IProcessingResult HandleContent(Content content)
+		{
+			return null;
+		}
+
+		protected override IProcessingResult Aggregate(IEnumerable<IProcessingResult> results)
+		{
+			return results.Single(r => r != null);
+		}
+	}
 }
