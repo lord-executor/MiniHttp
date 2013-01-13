@@ -1,0 +1,19 @@
+- build script for different deployment artifacts:
+  - minimalistic static-files-only server
+  - standard server with general purpose configuration
+  - library (.dll)
+  - automatic update of assembly info
+- request preprocessor for .../ -> .../index.{something}
+- move default processors to a separate handler that reacts to specific URLs only (e.g. *.html.processed)
+- @url(...) replacement in template processor (make URL absolute to current webroot)
+- request/response abstraction
+- documentation (wiki pages)
+  - user how-to (minimalistic and general purpose server)
+  - general architecture
+  - request handlers
+  - processors
+    - template processor
+	- variable processor
+- Mono support
+- unit tests
+- code comments

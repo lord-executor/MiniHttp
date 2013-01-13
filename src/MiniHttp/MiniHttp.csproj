@@ -80,7 +80,7 @@
     <Compile Include="Server\RouteInformation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="readme.txt">
+    <Content Include="todo.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <EmbeddedResource Include="RequestHandlers\Resources\404.html" />
