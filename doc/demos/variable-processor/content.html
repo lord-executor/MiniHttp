@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>VariableProcessor Demo</title>
+	
+	<link type="text/css" rel="stylesheet/less" href="/styles/main.less" />
+	
+	<script type="text/javascript" src="/scripts/less-1.3.3.js"></script>
+</head>
+<body>
+	<div class="page">
+		<div class="var-context level-1">
+			@varPush("foo", "alpha")
+			<p class="var-declaration">foo = alpha</p>
+			<ul>
+				<li>foo: @varVal("foo")</li>
+				<li>bar: @varVal("bar")</li>
+			</ul>
+			<div class="var-context level-2">
+				@varPush("bar", "one")
+				<p class="var-declaration">bar = one</p>
+				<ul>
+					<li>foo: @varVal("foo")</li>
+					<li>bar: @varVal("bar")</li>
+				</ul>
+				<div class="var-context level-3">
+					@varPush("foo", "beta")
+					<p class="var-declaration">foo = beta (immediate pop)</p>
+					<ul>
+						<li>foo: @varPop("foo")</li>
+						<li>bar: @varVal("bar")</li>
+					</ul>
+					<div class="var-context level-4">
+						@varPush("bar", "two")
+						<p class="var-declaration">bar = two (no pop)</p>
+						<ul>
+							<li>foo: @varVal("foo")</li>
+							<li>bar: @varVal("bar")</li>
+						</ul>
+					</div>
+					<ul>
+						<li>foo: @varVal("foo")</li>
+						<li>bar: @varVal("bar")</li>
+					</ul>
+				</div>
+				<ul>
+					<li>foo: @varVal("foo")</li>
+					<li>bar: @varVal("bar")</li>
+				</ul>
+				@varPopQuiet("bar")
+			</div>
+			<ul>
+				<li>foo: @varVal("foo")</li>
+				<li>bar: @varVal("bar")</li>
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
