@@ -8,22 +8,51 @@ using MiniHttp.Processors.Commands;
 
 namespace MiniHttp.Processors
 {
-	public abstract class BasicCommandProcessor : Processor, ILineSegmentHandler
+	public abstract class BasicCommandProcessor<TResult> : Processor, ICommandHandler<TResult>
 	{
+		private readonly Dictionary<string, Func<Command, TResult>> _commands;
+
+		public bool SuppressEmptyLines { get; protected set; }
+
+		protected BasicCommandProcessor()
+		{
+			_commands = new Dictionary<string, Func<Command, TResult>>();
+			SuppressEmptyLines = true;
+		}
+
 		protected override IProcessingResult ProcessLine(Line line)
 		{
-			var commands = new CommandExtractor(line);
+			var commands = new CommandExtractor<TResult>(line, this);
 			if (!commands.HasCommands)
 				return Identity();
 
-			return Transform(String.Concat(commands.Select(segment => segment.Accept(this))));
+			return Aggregate(commands.ProcessSegments());
 		}
 
-		public abstract string Handle(Command command);
-
-		public virtual string Handle(Content content)
+		protected void RegisterCommand(string commandName, Func<Command, TResult> handler)
 		{
-			return content.Value;
+			_commands.Add(commandName, handler);
+		}
+
+		public bool HasCommand(string commandName)
+		{
+			return _commands.ContainsKey(commandName);
+		}
+
+		public TResult Execute(Command command)
+		{
+			return _commands[command.Name](command);
+		}
+
+		public abstract TResult HandleContent(Content content);
+
+		public virtual IProcessingResult Aggregate(IEnumerable<TResult> results)
+		{
+			var transformedLine = String.Concat(results);
+			if (SuppressEmptyLines && String.IsNullOrWhiteSpace(transformedLine))
+				return Suppress();
+
+			return Transform(transformedLine);
 		}
 	}
 }

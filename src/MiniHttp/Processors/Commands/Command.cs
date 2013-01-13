@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MiniHttp.Processors.Commands
 {
-	public class Command : ILineSegment
+	public class Command
 	{
 		public string Name { get; private set; }
 		public string Argument { get; private set; }
@@ -14,11 +14,6 @@ namespace MiniHttp.Processors.Commands
 		{
 			Name = command;
 			Argument = argument;
-		}
-
-		public string Accept(ILineSegmentHandler handler)
-		{
-			return handler.Handle(this);
 		}
 	}
 }

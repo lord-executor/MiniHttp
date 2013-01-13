@@ -49,8 +49,7 @@
     <Compile Include="Processors\Commands\Command.cs" />
     <Compile Include="Processors\Commands\CommandExtractor.cs" />
     <Compile Include="Processors\Commands\Content.cs" />
-    <Compile Include="Processors\Commands\ILineSegment.cs" />
-    <Compile Include="Processors\Commands\ILineSegmentHandler.cs" />
+    <Compile Include="Processors\Commands\ICommandHandler.cs" />
     <Compile Include="Processors\TemplateProcessor.cs" />
     <Compile Include="Processors\VariableProcessor.cs" />
     <Compile Include="Program.cs" />

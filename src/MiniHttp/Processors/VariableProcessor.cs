@@ -7,29 +7,32 @@ using MiniHttp.Processors.Commands;
 
 namespace MiniHttp.Processors
 {
-	public class VariableProcessor : BasicCommandProcessor
+	public class VariableProcessor : BasicCommandProcessor<string>
 	{
 		private readonly Dictionary<string, string> _variables;
 
 		public VariableProcessor()
 		{
 			_variables = new Dictionary<string, string>();
+			RegisterCommand("var", Var);
+			RegisterCommand("val", Val);
 		}
 
-		public override string Handle(Command command)
+		private string Var(Command command)
 		{
-			if (command.Name == "var")
-			{
-				var decl = command.Argument.Split(new[] { '=' }, 2);
-				_variables[decl[0]] = decl[1];
-				return String.Empty;
-			}
-			else if (command.Name == "val")
-			{
-				return _variables.ContainsKey(command.Argument) ? _variables[command.Argument] : "null";
-			}
+			var decl = command.Argument.Split(new[] { '=' }, 2);
+			_variables[decl[0]] = decl[1];
+			return String.Empty;
+		}
 
-			return String.Format("@{0}({1})", command.Name, command.Argument);
+		private string Val(Command command)
+		{
+			return _variables.ContainsKey(command.Argument) ? _variables[command.Argument] : "null";
+		}
+
+		public override string HandleContent(Content content)
+		{
+			return content.Value;
 		}
 	}
 }

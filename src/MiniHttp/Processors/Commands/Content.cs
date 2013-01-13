@@ -5,18 +5,13 @@ using System.Text;
 
 namespace MiniHttp.Processors.Commands
 {
-	public class Content : ILineSegment
+	public class Content
 	{
 		public string Value { get; private set; }
 
 		public Content(string content)
 		{
 			Value = content;
-		}
-
-		public string Accept(ILineSegmentHandler handler)
-		{
-			return handler.Handle(this);
 		}
 	}
 }
