@@ -5,13 +5,20 @@ using System.Text;
 
 namespace MiniHttp.RequestHandlers.Processing.Results
 {
-    public class Resume : IProcessingResult
+    public class Template : IProcessingResult
     {
+        private readonly LineSource _source;
+
+        public Template(LineSource source)
+        {
+            _source = source;
+        }
+
         #region IProcessingResult Members
 
         public Line Apply(LineSource.LineSourceEnumerator enumerator)
         {
-            enumerator.Resume();
+            enumerator.Template(_source);
             return null;
         }
 

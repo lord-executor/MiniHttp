@@ -55,6 +55,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandlers\Processing\FileSourceResolver.cs" />
+    <Compile Include="RequestHandlers\Processing\Results\Template.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Identity.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Insert.cs" />
     <Compile Include="RequestHandlers\Processing\IProcessor.cs" />

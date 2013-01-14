@@ -14,7 +14,7 @@ namespace MiniHttp.Processors
 
 		public TemplateProcessor()
 		{
-			RegisterCommand("template", c => InsertCommand(_currentLine, c));
+            RegisterCommand("template", c => TemplateCommand(_currentLine, c));
 			RegisterCommand("import", c => InsertCommand(_currentLine, c));
 			RegisterCommand("content", ResumeCommand);
 		}
@@ -23,6 +23,11 @@ namespace MiniHttp.Processors
         {
 			_currentLine = line;
 			return base.ProcessLine(line);
+        }
+
+        private IProcessingResult TemplateCommand(Line line, Command command)
+        {
+            return Template(line.CreateSource(command.Arguments.Single()));
         }
 
 		private IProcessingResult InsertCommand(Line line, Command command)

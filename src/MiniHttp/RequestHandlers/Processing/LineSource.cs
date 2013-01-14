@@ -30,32 +30,42 @@ namespace MiniHttp.RequestHandlers.Processing
 
         public class LineSourceEnumerator : IEnumerator<Line>
         {
-            private readonly Stack<IEnumerator<Line>> _currentEnumerator;
+            private readonly Stack<SourceWrapper> _currentEnumerator;
             private Line _currentLine;
 
             public LineSourceEnumerator(LineSource source)
             {
-                _currentEnumerator = new Stack<IEnumerator<Line>>();
-                _currentEnumerator.Push(source.GetLineEnumerator());
+                _currentEnumerator = new Stack<SourceWrapper>();
+                _currentEnumerator.Push(new SourceWrapper(source));
+            }
+
+            public void Template(LineSource source, bool disposeWhenDone = true)
+            {
+                _currentEnumerator.Push(new SourceWrapper(source, disposeWhenDone, SourceType.Template));
             }
 
             public void Insert(LineSource source, bool disposeWhenDone = true)
             {
-                var enumerator = source.GetLineEnumerator();
-                if (disposeWhenDone)
-                    enumerator = new DisposingEnumerator<Line>(enumerator, new [] { source });
-                _currentEnumerator.Push(enumerator);
+                _currentEnumerator.Push(new SourceWrapper(source, disposeWhenDone));
             }
 
-            public void Flip()
+            public void Resume()
             {
                 if (_currentEnumerator.Count < 2)
                     throw new InvalidOperationException("Needs at least two sources on the stack");
 
-                var first = _currentEnumerator.Pop();
-                var second = _currentEnumerator.Pop();
-                _currentEnumerator.Push(first);
-                _currentEnumerator.Push(second);
+                var lifted = new Stack<SourceWrapper>();
+                var current = _currentEnumerator.Pop();
+
+                do
+                {
+                    lifted.Push(_currentEnumerator.Pop());
+                } while (lifted.Peek().SourceType == SourceType.Template);
+
+                _currentEnumerator.Push(current);
+                
+                while (lifted.Count > 0)
+                    _currentEnumerator.Push(lifted.Pop());
             }
 
             #region IEnumerator<Line> Members
@@ -73,7 +83,7 @@ namespace MiniHttp.RequestHandlers.Processing
             {
                 while (_currentEnumerator.Count > 0)
                 {
-                    _currentEnumerator.Pop().Dispose();
+                    _currentEnumerator.Pop().Enumerator.Dispose();
                 }
             }
 
@@ -88,9 +98,9 @@ namespace MiniHttp.RequestHandlers.Processing
 
             public bool MoveNext()
             {
-                while (!_currentEnumerator.Peek().MoveNext())
+                while (!_currentEnumerator.Peek().Enumerator.MoveNext())
                 {
-                    _currentEnumerator.Pop().Dispose();
+                    _currentEnumerator.Pop().Enumerator.Dispose();
                     
                     if (_currentEnumerator.Count == 0)
                     {
@@ -98,7 +108,7 @@ namespace MiniHttp.RequestHandlers.Processing
                     }
                 }
 
-                _currentLine = _currentEnumerator.Peek().Current;
+                _currentLine = _currentEnumerator.Peek().Enumerator.Current;
                 return true;
             }
 
@@ -108,6 +118,26 @@ namespace MiniHttp.RequestHandlers.Processing
             }
 
             #endregion
+
+            private enum SourceType
+            {
+                Normal = 0,
+                Template,
+            }
+
+            private class SourceWrapper
+            {
+                public IEnumerator<Line> Enumerator { get; private set; }
+                public SourceType SourceType { get; private set; }
+
+                public SourceWrapper(LineSource source, bool disposeWhenDone = true, SourceType type = SourceType.Normal)
+                {
+                    Enumerator = source.GetLineEnumerator();
+                    if (disposeWhenDone)
+                        Enumerator = new DisposingEnumerator<Line>(Enumerator, new[] { source });
+                    SourceType = type;
+                }
+            }
 
             private class DisposingEnumerator<T> : IEnumerator<T>
             {
