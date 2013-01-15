@@ -81,22 +81,42 @@ namespace MiniHttp.Server
                 if (!_routes.Any(route => route.TryRoute(context)))
                 {
                     context.Response.StatusCode = 500;
-                    Console.WriteLine("    Unhandled request");
+                    Console.Error.WriteLine("    Unhandled request");
                 }
                 else
                 {
                     Console.WriteLine("    HTTP {0} - {1}", context.Response.StatusCode, context.Response.ContentType);
                 }
             }
+            catch (HttpListenerException e)
+            {
+                if (e.ErrorCode == 64) // The specified network name is no longer available
+                {
+                    Console.Error.WriteLine("    ... request aborted.");
+                    return;
+                }
+                LogException(context, e);
+            }
             catch (Exception e)
             {
-                Console.WriteLine("    Unhandled exception");
-                Console.WriteLine(e);
-                context.Response.StatusCode = 500;
-                context.Response.ContentLength64 = 0;
+                LogException(context, e);
             }
 
-            context.Response.Close();
+            try
+            {
+                context.Response.Close();
+            }
+            catch (Exception e)
+            {
+                LogException(context, e);
+            }
+        }
+
+        private void LogException(HttpListenerContext context, Exception e)
+        {
+            Console.Error.WriteLine("    Unhandled exception");
+            Console.Error.WriteLine(e);
+            context.Response.StatusCode = 500;
         }
     }
 }
