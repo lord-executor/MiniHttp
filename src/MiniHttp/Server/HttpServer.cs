@@ -12,6 +12,8 @@ namespace MiniHttp.Server
     {
         private readonly HttpListener _listener;
         private readonly Thread _dispatcherThread;
+        private readonly List<RequestPreprocessor> _preporcessors;
+        private readonly List<RequestPostprocessor> _postporcessors;
         private readonly List<RouteDefinition> _routes;
 
 		public string ListenerPrefix { get; private set; }
@@ -23,6 +25,8 @@ namespace MiniHttp.Server
 			_listener.Prefixes.Add(ListenerPrefix);
 
             _dispatcherThread = new Thread(Dispatch);
+            _preporcessors = new List<RequestPreprocessor>();
+            _postporcessors = new List<RequestPostprocessor>();
             _routes = new List<RouteDefinition>();
         }
 
@@ -38,6 +42,32 @@ namespace MiniHttp.Server
         {
             _listener.Stop(); // stopping the listener causes an exception in the dispatcher
             _dispatcherThread.Join(5000);
+        }
+
+        public void RegisterPreprocessor(RequestPreprocessor preprocessor)
+        {
+            if (_listener.IsListening)
+                throw new Exception("Already running");
+
+            _preporcessors.Add(preprocessor);
+        }
+
+        public void RegisterPreprocessor(IRequestProcessor preprocessor)
+        {
+            RegisterPreprocessor(preprocessor.ProcessRequest);
+        }
+
+        public void RegisterPostprocessor(RequestPostprocessor postprocessor)
+        {
+            if (_listener.IsListening)
+                throw new Exception("Already running");
+
+            _postporcessors.Add(postprocessor);
+        }
+
+        public void RegisterPostprocessor(IRequestProcessor postprocessor)
+        {
+            RegisterPostprocessor(postprocessor.ProcessRequest);
         }
 
         public void RegisterRoute(string pathExpression, RequestHandler handler)
@@ -60,7 +90,7 @@ namespace MiniHttp.Server
                 try
                 {
                     var context = _listener.GetContext();
-                    ThreadPool.QueueUserWorkItem(threadContext => ProcessRequest(context));
+                    ThreadPool.QueueUserWorkItem(threadContext => ProcessRequest(new RequestContext(context)));
                 }
                 catch (Exception e)
                 {
@@ -70,7 +100,21 @@ namespace MiniHttp.Server
             }
         }
 
-        private void ProcessRequest(HttpListenerContext context)
+        private void RunRoutes(RequestContext context)
+        {
+            if (!_routes.Any(route => route.TryRoute(context)))
+            {
+                context.Response.StatusCode = 500;
+                Console.Error.WriteLine("    Unhandled request");
+                throw new HttpServerException("Unhandled request");
+            }
+            else
+            {
+                Console.WriteLine("    HTTP {0} - {1}", context.Response.StatusCode, context.Response.ContentType);
+            }
+        }
+
+        private void ProcessRequest(RequestContext context)
         {
             Console.WriteLine("{0} @ {1} {2}", context.Request.RemoteEndPoint.Address, context.Request.HttpMethod, context.Request.Url);
 
@@ -78,27 +122,30 @@ namespace MiniHttp.Server
 
             try
             {
-                if (!_routes.Any(route => route.TryRoute(context)))
+                _preporcessors.ForEach(p => p(context));
+
+                try
                 {
-                    context.Response.StatusCode = 500;
-                    Console.Error.WriteLine("    Unhandled request");
+                    RunRoutes(context);
                 }
-                else
+                catch (Exception e)
                 {
-                    Console.WriteLine("    HTTP {0} - {1}", context.Response.StatusCode, context.Response.ContentType);
+                    if (e is HttpListenerException)
+                        throw;
+
+                    context.Errors.Add(e);
+                    LogException(context, e);
                 }
+
+                _postporcessors.ForEach(p => p(context));
             }
-            catch (HttpListenerException e)
+            catch (Exception e)
             {
-                if (e.ErrorCode == 64) // The specified network name is no longer available
+                if (e is HttpListenerException && (e as HttpListenerException).ErrorCode == 64) // The specified network name is no longer available
                 {
                     Console.Error.WriteLine("    ... request aborted.");
                     return;
                 }
-                LogException(context, e);
-            }
-            catch (Exception e)
-            {
                 LogException(context, e);
             }
 
@@ -112,7 +159,7 @@ namespace MiniHttp.Server
             }
         }
 
-        private void LogException(HttpListenerContext context, Exception e)
+        private void LogException(RequestContext context, Exception e)
         {
             Console.Error.WriteLine("    Unhandled exception");
             Console.Error.WriteLine(e);

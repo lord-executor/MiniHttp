@@ -18,12 +18,12 @@ namespace MiniHttp.Server
             Handler = handler;
         }
 
-        public bool TryRoute(HttpListenerContext context)
+        public bool TryRoute(RequestContext context)
         {
             var match = MatchExpression.Match(context.Request.Url.PathAndQuery);
             if (match.Success)
             {
-                if (Handler(new RequestContext(context)))
+                if (Handler(context))
                     return true;
             }
             return false;

@@ -72,8 +72,10 @@
     <Compile Include="RequestHandlers\Processing\Results\Suppress.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Transform.cs" />
     <Compile Include="Server\HttpServer.cs" />
+    <Compile Include="Server\HttpServerException.cs" />
     <Compile Include="Server\IRequest.cs" />
     <Compile Include="Server\IRequestHandler.cs" />
+    <Compile Include="Server\IRequestProcessor.cs" />
     <Compile Include="Server\IResponse.cs" />
     <Compile Include="Server\MimeTypes.cs" />
     <Compile Include="Server\RequestContext.cs" />
