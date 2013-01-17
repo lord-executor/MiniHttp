@@ -2,6 +2,7 @@
 using System.IO;
 using MiniHttp.Processors;
 using MiniHttp.RequestHandlers;
+using MiniHttp.RequestProcessors;
 using MiniHttp.Server;
 using System.Net;
 using System.Diagnostics;
@@ -28,15 +29,17 @@ namespace MiniHttp
 		private void StartServer()
 		{
 			_server = new HttpServer(_arguments.Port);
-			RegisterRoutes();
+			RegisterModules();
 			_server.Start();
 		}
 
-		private void RegisterRoutes()
+		private void RegisterModules()
 		{
 			var webroot = new DirectoryInfo(_arguments.WebRoot);
 			if (!webroot.Exists)
 				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
+
+            _server.RegisterPostprocessor(new ServerErrorProcessor());
 
 			_server.RegisterRoute(@"\.html$", new ProcessingFileHandler(webroot).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
 			_server.RegisterRoute(@".*", new StaticFileHandler(webroot));
