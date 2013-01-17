@@ -1,12 +1,16 @@
 ﻿using System;
-using System.IO;
-using MiniHttp.Processors;
-using MiniHttp.RequestHandlers;
-using MiniHttp.RequestProcessors;
-using MiniHttp.Server;
-using System.Net;
 using System.Diagnostics;
-using System.Security.Principal;
+using System.Net;
+using System.IO;
+using System.Reflection;
+using System.Linq;
+using MiniHttp.Server;
+using MiniHttp.RequestProcessors;
+using MiniHttp.RequestHandlers;
+
+#if !MINIMAL
+using MiniHttp.Processors;
+#endif
 
 namespace MiniHttp
 {
@@ -33,6 +37,8 @@ namespace MiniHttp
 			_server.Start();
 		}
 
+#if MINIMAL
+
 		private void RegisterModules()
 		{
 			var webroot = new DirectoryInfo(_arguments.WebRoot);
@@ -40,11 +46,26 @@ namespace MiniHttp
 				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
 
             _server.RegisterPostprocessor(new ServerErrorProcessor());
+			_server.RegisterRoute(@".*", new StaticFileHandler(webroot));
+			_server.RegisterRoute(@".*", new NotFoundHandler());
+		}
+
+#else
+
+		private void RegisterModules()
+		{
+			var webroot = new DirectoryInfo(_arguments.WebRoot);
+			if (!webroot.Exists)
+				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
+
+			_server.RegisterPostprocessor(new ServerErrorProcessor());
 
 			_server.RegisterRoute(@"\.html$", new ProcessingFileHandler(webroot).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
 			_server.RegisterRoute(@".*", new StaticFileHandler(webroot));
 			_server.RegisterRoute(@".*", new NotFoundHandler());
 		}
+
+#endif
 
 		public void Run()
 		{
@@ -88,11 +109,33 @@ namespace MiniHttp
 				}
 			} while (retry);
 
-			Console.WriteLine("Server running");
+			PrintServerInfo();
+			Console.WriteLine("Server running...");
 			Console.WriteLine("Press RETURN to stop");
 			Console.ReadLine();
 
 			_server.Stop();
+		}
+
+		private void PrintServerInfo()
+		{
+			var assembly = Assembly.GetExecutingAssembly();
+			var attributes = assembly.GetCustomAttributes(false);
+
+			var title = attributes.OfType<AssemblyTitleAttribute>().FirstOrDefault();
+			Console.Write(title == null ? "MiniHttp" : title.Title);
+
+#if MINIMAL
+			Console.Write(" (minimal)");
+#endif
+
+			var version = attributes.OfType<AssemblyVersionAttribute>().FirstOrDefault();
+			Console.Write(" version {0}", assembly.GetName().Version);
+			Console.WriteLine();
+
+			var description = attributes.OfType<AssemblyDescriptionAttribute>().FirstOrDefault();
+			if (description != null)
+				Console.WriteLine(description.Description);
 		}
 
 		private int PermissionPrompt()
