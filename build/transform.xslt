@@ -5,13 +5,14 @@
 	<xsl:param name="Debug">false</xsl:param>
 	<xsl:param name="OutputType">exe</xsl:param>
 	<xsl:param name="OutputName"><xsl:value-of select="/cs:Project/cs:PropertyGroup/cs:AssemblyName" />.exe</xsl:param>
+	<xsl:param name="OutputDir">.</xsl:param>
 	<xsl:param name="ExcludeFiles"></xsl:param>
 	<xsl:variable name="ExcludedFilesEx"><xsl:value-of select="$ExcludeFiles" />,</xsl:variable>
 	
 	<xsl:template match="@*|node()">
 		<xsl:apply-templates select="@*|node()"/>
 	</xsl:template>
-	<xsl:template match="/">/out:"<xsl:value-of select="$OutputName" />"
+	<xsl:template match="/">/out:"<xsl:value-of select="$OutputDir" />\<xsl:value-of select="$OutputName" />"
 /target:<xsl:value-of select="$OutputType" />
 /platform:x86<xsl:if test="$Debug = 'true'">
 /debug+

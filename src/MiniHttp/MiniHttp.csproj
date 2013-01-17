@@ -54,7 +54,6 @@
     <Compile Include="Processors\TemplateProcessor.cs" />
     <Compile Include="Processors\VariableProcessor.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandlers\Processing\FileSourceResolver.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Template.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Identity.cs" />
@@ -88,7 +87,11 @@
     <Content Include="todo.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="version.txt" />
     <EmbeddedResource Include="RequestHandlers\Resources\404.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
