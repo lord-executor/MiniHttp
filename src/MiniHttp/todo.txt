@@ -15,6 +15,11 @@ TODO:
   - processors
     - template processor
 	- variable processor
+- configuration of the server through a file in the webroot where it is started
+- handler for directory listing (in absence of index file)
+- refactoring of line source into interface + extension method(s)
+- simple virtulaizing handler for use with e.g. markdown to load a template with parameters depending on the virtual resource
+- dynamic plugin loading
 - Mono support
 - unit tests
 - code comments
