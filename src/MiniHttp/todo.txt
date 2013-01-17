@@ -4,7 +4,6 @@ TODO:
   - standard server with general purpose configuration
   - library (.dll)
   - automatic update of assembly info
-- return plain text exception information for failed requests
 - request preprocessor for .../ -> .../index.{something}
 - move default processors to a separate handler that reacts to specific URLs only (e.g. *.html.processed)
 - @url(...) replacement in template processor (make URL absolute to current webroot)
@@ -22,3 +21,4 @@ TODO:
 
 DONE:
 - fixing line source enumerator for recursive templates
+- return plain text exception information for failed requests
