@@ -60,7 +60,7 @@ namespace MiniHttp
 
 			_server.RegisterPostprocessor(new ServerErrorProcessor());
 
-			_server.RegisterRoute(@"\.html$", new ProcessingFileHandler(webroot).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
+			_server.RegisterRoute(@"\.html($|\?)", new ProcessingFileHandler(webroot).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
 			_server.RegisterRoute(@".*", new StaticFileHandler(webroot));
 			_server.RegisterRoute(@".*", new NotFoundHandler());
 		}
