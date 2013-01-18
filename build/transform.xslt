@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:cs="http://schemas.microsoft.com/developer/msbuild/2003">
 	<xsl:output method="text" version="1.0" encoding="utf-8" indent="no"/>
 	
+	<xsl:param name="ProjectPath">..\src\MiniHttp</xsl:param>
 	<xsl:param name="Debug">false</xsl:param>
 	<xsl:param name="OutputType">exe</xsl:param>
 	<xsl:param name="OutputName"><xsl:value-of select="/cs:Project/cs:PropertyGroup/cs:AssemblyName" />.exe</xsl:param>
@@ -27,8 +28,18 @@
 	
 	<xsl:template match="cs:Reference">/r:"<xsl:value-of select="@Include" />.dll"
 </xsl:template>
-	<xsl:template match="cs:EmbeddedResource">/res:"..\src\MiniHttp\<xsl:value-of select="@Include" />","<xsl:value-of select="/cs:Project/cs:PropertyGroup/cs:RootNamespace" />.<xsl:value-of select="translate(@Include, '\', '.')" />"
-</xsl:template>
+
+	<xsl:template match="cs:EmbeddedResource">
+		<xsl:variable name="exclude">
+			<xsl:call-template name="is-excluded">
+				<xsl:with-param name="file" select="@Include" />
+				<xsl:with-param name="exclude" select="$ExcludedFilesEx" />
+			</xsl:call-template>
+		</xsl:variable>
+		<xsl:if test="$exclude != 'true'">/res:"<xsl:value-of select="$ProjectPath" />\<xsl:value-of select="@Include" />","<xsl:value-of select="/cs:Project/cs:PropertyGroup/cs:RootNamespace" />.<xsl:value-of select="translate(@Include, '\', '.')" />"
+</xsl:if>
+	</xsl:template>
+
 	<xsl:template match="cs:Compile">
 		<xsl:variable name="exclude">
 			<xsl:call-template name="is-excluded">
@@ -36,7 +47,7 @@
 				<xsl:with-param name="exclude" select="$ExcludedFilesEx" />
 			</xsl:call-template>
 		</xsl:variable>
-		<xsl:if test="$exclude != 'true'">"..\src\MiniHttp\<xsl:value-of select="@Include" />"
+		<xsl:if test="$exclude != 'true'">"<xsl:value-of select="$ProjectPath" />\<xsl:value-of select="@Include" />"
 </xsl:if>
 	</xsl:template>
 
