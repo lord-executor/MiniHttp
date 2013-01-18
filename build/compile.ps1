@@ -8,7 +8,7 @@ $csc = "C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe"
 $outputDir = Resolve-Path "$scriptPath/../bin"
 $tmpDir = "$outputDir\tmp"
 $version = Get-Content "$scriptPath/../src/MiniHttp/version.txt"
-$commit = &git show HEAD --format="%H from %ai"
+$commit = git show HEAD --format="%H from %ai" | Select -First 1
 if (!(Test-Path $outputDir))
 {
 	New-Item $outputDir -type directory
