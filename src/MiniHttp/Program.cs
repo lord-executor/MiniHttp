@@ -58,6 +58,7 @@ namespace MiniHttp
 			if (!webroot.Exists)
 				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
 
+            _server.RegisterPreprocessor(new IndexRouting(webroot));
 			_server.RegisterPostprocessor(new ServerErrorProcessor());
 
 			_server.RegisterRoute(@"\.html($|\?)", new ProcessingFileHandler(webroot).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
