@@ -7,18 +7,18 @@ namespace MiniHttp.RequestHandlers.Processing.Results
 {
     public class Insert : IProcessingResult
     {
-        private readonly LineSource _source;
+		private readonly ILineSource _source;
 
-        public Insert(LineSource source)
+		public Insert(ILineSource source)
         {
             _source = source;
         }
 
         #region IProcessingResult Members
 
-        public Line Apply(LineSource.LineSourceEnumerator enumerator)
+		public Line Apply(LineSourceExtensions.LineIterator iterator)
         {
-            enumerator.Insert(_source);
+			iterator.Insert(_source);
             return null;
         }
 

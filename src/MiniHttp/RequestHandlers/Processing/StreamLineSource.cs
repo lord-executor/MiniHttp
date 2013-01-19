@@ -27,7 +27,7 @@ namespace MiniHttp.RequestHandlers.Processing
         /// in use, is not a good idea and would result in very 'interesting' behavior - since the
         /// underlying stream itself cannot be in two places at once.
         /// </remarks>
-        protected override IEnumerator<Line> GetLineEnumerator()
+        public override IEnumerator<Line> GetEnumerator()
         {
             var reader = new StreamReader(_stream);
             string line;

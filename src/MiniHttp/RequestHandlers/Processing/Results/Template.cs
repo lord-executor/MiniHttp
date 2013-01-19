@@ -7,18 +7,18 @@ namespace MiniHttp.RequestHandlers.Processing.Results
 {
     public class Template : IProcessingResult
     {
-        private readonly LineSource _source;
+		private readonly ILineSource _source;
 
-        public Template(LineSource source)
+		public Template(ILineSource source)
         {
             _source = source;
         }
 
         #region IProcessingResult Members
 
-        public Line Apply(LineSource.LineSourceEnumerator enumerator)
+		public Line Apply(LineSourceExtensions.LineIterator iterator)
         {
-            enumerator.Template(_source);
+			iterator.Template(_source);
             return null;
         }
 

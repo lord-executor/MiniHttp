@@ -37,12 +37,12 @@ namespace MiniHttp.RequestHandlers.Processing
             return new Transform(_current, transformed);
         }
 
-        protected Template Template(LineSource source)
+		protected Template Template(ILineSource source)
         {
             return new Template(source);
         }
 
-        protected Insert Insert(LineSource source)
+		protected Insert Insert(ILineSource source)
         {
             return new Insert(source);
         }

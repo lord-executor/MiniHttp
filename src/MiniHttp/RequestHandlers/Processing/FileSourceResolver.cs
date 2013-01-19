@@ -17,7 +17,7 @@ namespace MiniHttp.RequestHandlers.Processing
 
         #region ISourceResolver Members
 
-        public LineSource CreateSource(string path)
+		public ILineSource CreateSource(string path)
         {
             var file = new FileInfo(Path.Combine(_basePath, path));
             return new StreamLineSource(file.OpenRead(), new FileSourceResolver(file));

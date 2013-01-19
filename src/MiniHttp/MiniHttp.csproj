@@ -55,13 +55,14 @@
     <Compile Include="Processors\VariableProcessor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="RequestHandlers\Processing\FileSourceResolver.cs" />
+    <Compile Include="RequestHandlers\Processing\LineSourceExtensions.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Template.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Identity.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Insert.cs" />
     <Compile Include="RequestHandlers\Processing\IProcessor.cs" />
     <Compile Include="RequestHandlers\Processing\ISourceResolver.cs" />
     <Compile Include="RequestHandlers\Processing\Line.cs" />
-    <Compile Include="RequestHandlers\Processing\LineSource.cs" />
+    <Compile Include="RequestHandlers\Processing\ILineSource.cs" />
     <Compile Include="RequestHandlers\NotFoundHandler.cs" />
     <Compile Include="RequestHandlers\ProcessingFileHandler.cs" />
     <Compile Include="RequestHandlers\Processing\IProcessingResult.cs" />

@@ -7,6 +7,6 @@ namespace MiniHttp.RequestHandlers.Processing
 {
     public interface ISourceResolver
     {
-        LineSource CreateSource(string path);
+		ILineSource CreateSource(string path);
     }
 }

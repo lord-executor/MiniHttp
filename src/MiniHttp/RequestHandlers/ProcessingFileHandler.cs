@@ -35,10 +35,10 @@ namespace MiniHttp.RequestHandlers
 
             using (var source = new StreamLineSource(input.OpenRead(), resolver))
             {
-                var enumerator = source.GetEnumerator();
-                while (enumerator.MoveNext())
+                var iterator = source.GetLineIterator();
+                while (iterator.MoveNext())
                 {
-					var result = processors.Aggregate(enumerator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(enumerator));
+					var result = processors.Aggregate(iterator.Current, (line, processor) => line == null ? null : processor.Process(line).Apply(iterator));
                     if (result != null)
                         writer.WriteLine(result);
                 }

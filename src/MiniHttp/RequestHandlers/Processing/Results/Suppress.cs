@@ -9,7 +9,7 @@ namespace MiniHttp.RequestHandlers.Processing.Results
     {
         #region IProcessingResult Members
 
-        public Line Apply(LineSource.LineSourceEnumerator enumerator)
+		public Line Apply(LineSourceExtensions.LineIterator iterator)
         {
             return null;
         }
