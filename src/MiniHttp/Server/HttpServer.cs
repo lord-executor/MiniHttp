@@ -12,8 +12,8 @@ namespace MiniHttp.Server
     {
         private readonly HttpListener _listener;
         private readonly Thread _dispatcherThread;
-        private readonly List<RequestPreprocessor> _preporcessors;
-        private readonly List<RequestPostprocessor> _postporcessors;
+        private readonly List<RequestPreHook> _preHooks;
+        private readonly List<RequestPostHook> _postHooks;
         private readonly List<RouteDefinition> _routes;
 
 		public string ListenerPrefix { get; private set; }
@@ -25,8 +25,8 @@ namespace MiniHttp.Server
 			_listener.Prefixes.Add(ListenerPrefix);
 
             _dispatcherThread = new Thread(Dispatch);
-            _preporcessors = new List<RequestPreprocessor>();
-            _postporcessors = new List<RequestPostprocessor>();
+            _preHooks = new List<RequestPreHook>();
+            _postHooks = new List<RequestPostHook>();
             _routes = new List<RouteDefinition>();
         }
 
@@ -44,30 +44,30 @@ namespace MiniHttp.Server
             _dispatcherThread.Join(5000);
         }
 
-        public void RegisterPreprocessor(RequestPreprocessor preprocessor)
+        public void RegisterPreHook(RequestPreHook preHook)
         {
             if (_listener.IsListening)
                 throw new Exception("Already running");
 
-            _preporcessors.Add(preprocessor);
+			_preHooks.Add(preHook);
         }
 
-        public void RegisterPreprocessor(IRequestProcessor preprocessor)
+		public void RegisterPreHook(IRequestHook preHook)
         {
-            RegisterPreprocessor(preprocessor.ProcessRequest);
+			RegisterPreHook(preHook.ProcessRequest);
         }
 
-        public void RegisterPostprocessor(RequestPostprocessor postprocessor)
+        public void RegisterPostHook(RequestPostHook postHook)
         {
             if (_listener.IsListening)
                 throw new Exception("Already running");
 
-            _postporcessors.Add(postprocessor);
+			_postHooks.Add(postHook);
         }
 
-        public void RegisterPostprocessor(IRequestProcessor postprocessor)
+		public void RegisterPostHook(IRequestHook postHook)
         {
-            RegisterPostprocessor(postprocessor.ProcessRequest);
+			RegisterPostHook(postHook.ProcessRequest);
         }
 
         public void RegisterRoute(string pathExpression, RequestHandler handler)
@@ -122,7 +122,7 @@ namespace MiniHttp.Server
 
             try
             {
-                _preporcessors.ForEach(p => p(context));
+                _preHooks.ForEach(p => p(context));
 
                 try
                 {
@@ -137,7 +137,7 @@ namespace MiniHttp.Server
                     LogException(context, e);
                 }
 
-                _postporcessors.ForEach(p => p(context));
+                _postHooks.ForEach(p => p(context));
             }
             catch (Exception e)
             {

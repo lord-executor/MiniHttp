@@ -6,13 +6,13 @@ using System.Text;
 using MiniHttp.Server;
 using System.IO;
 
-namespace MiniHttp.RequestProcessors
+namespace MiniHttp.RequestHooks
 {
-    public class ServerErrorProcessor : IRequestProcessor
-    {
-        #region IRequestProcessor Members
+    public class ServerError : IRequestHook
+	{
+		#region IRequestHook Members
 
-        public void ProcessRequest(RequestContext context)
+		public void ProcessRequest(RequestContext context)
         {
             if (context.Errors.Count > 0)
             {

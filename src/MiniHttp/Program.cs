@@ -5,12 +5,12 @@ using System.IO;
 using System.Reflection;
 using System.Linq;
 using MiniHttp.Server;
-using MiniHttp.RequestProcessors;
 using MiniHttp.RequestHandlers;
+using MiniHttp.RequestHooks;
+using MiniHttp.Utilities;
 
 #if !MINIMAL
 using MiniHttp.Processors;
-using MiniHttp.Utilities;
 #endif
 
 namespace MiniHttp
@@ -46,8 +46,10 @@ namespace MiniHttp
 			if (!webroot.Exists)
 				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
 
-            _server.RegisterPostprocessor(new ServerErrorProcessor());
-			_server.RegisterRoute(@".*", new StaticFileHandler(webroot));
+			var serverMapper = new ServerUrlMapper(webroot);
+
+            _server.RegisterPostHook(new ServerError());
+			_server.RegisterRoute(@".*", new StaticFileHandler(serverMapper));
 			_server.RegisterRoute(@".*", new NotFoundHandler());
 		}
 
@@ -61,8 +63,8 @@ namespace MiniHttp
 
 			var serverMapper = new ServerUrlMapper(webroot);
 
-			_server.RegisterPreprocessor(new IndexRouting(serverMapper));
-			_server.RegisterPostprocessor(new ServerErrorProcessor());
+			_server.RegisterPreHook(new IndexRouting(serverMapper));
+			_server.RegisterPostHook(new ServerError());
 
 			_server.RegisterRoute(@"\.html($|\?)", new ProcessingFileHandler(serverMapper).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
 			_server.RegisterRoute(@".*", new StaticFileHandler(serverMapper));

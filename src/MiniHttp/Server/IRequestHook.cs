@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MiniHttp.Server
 {
-    public interface IRequestProcessor
+    public interface IRequestHook
     {
         void ProcessRequest(RequestContext context);
     }

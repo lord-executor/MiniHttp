@@ -6,9 +6,9 @@ using System.Text;
 using MiniHttp.Server;
 using MiniHttp.Utilities;
 
-namespace MiniHttp.RequestProcessors
+namespace MiniHttp.RequestHooks
 {
-    public class IndexRouting : IRequestProcessor
+    public class IndexRouting : IRequestHook
     {
         private readonly IUrlMapper _urlMapper;
 
@@ -17,7 +17,7 @@ namespace MiniHttp.RequestProcessors
 			_urlMapper = urlMapper;
         }
 
-        #region IRequestProcessor Members
+        #region IRequestHook Members
 
         public void ProcessRequest(RequestContext context)
         {

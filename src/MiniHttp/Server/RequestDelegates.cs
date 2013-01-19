@@ -6,7 +6,9 @@ using System.Net;
 
 namespace MiniHttp.Server
 {
+	public delegate void RequestPreHook(RequestContext context);
+
     public delegate bool RequestHandler(RequestContext context);
-    public delegate void RequestPreprocessor(RequestContext context);
-    public delegate void RequestPostprocessor(RequestContext context);
+
+    public delegate void RequestPostHook(RequestContext context);
 }
