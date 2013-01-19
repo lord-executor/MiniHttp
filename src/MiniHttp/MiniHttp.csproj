@@ -83,6 +83,8 @@
     <Compile Include="Server\RequestHandler.cs" />
     <Compile Include="Server\RouteDefinition.cs" />
     <Compile Include="Server\RouteInformation.cs" />
+    <Compile Include="Utilities\IUrlMapper.cs" />
+    <Compile Include="Utilities\ServerUrlMapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="todo.txt">

@@ -4,32 +4,31 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using MiniHttp.Server;
+using MiniHttp.Utilities;
 
 namespace MiniHttp.RequestProcessors
 {
     public class IndexRouting : IRequestProcessor
     {
-        private readonly DirectoryInfo _rootDir;
+        private readonly IUrlMapper _urlMapper;
 
-        public IndexRouting(DirectoryInfo rootDir)
+		public IndexRouting(IUrlMapper urlMapper)
         {
-            _rootDir = rootDir;
+			_urlMapper = urlMapper;
         }
 
         #region IRequestProcessor Members
 
         public void ProcessRequest(RequestContext context)
         {
-            var dir = new DirectoryInfo(Path.Combine(_rootDir.FullName, context.Url.AbsolutePath.Substring(1)));
+			var dir = _urlMapper.MapUrlToDirectory(context.Url);
             if (!dir.Exists)
                 return;
 
             var file = dir.GetFiles("index.*").FirstOrDefault();
             if (file != null)
             {
-                var newUri = new UriBuilder(context.Url);
-                newUri.Path = Path.Combine(newUri.Path, file.Name);
-                context.Url = newUri.Uri;
+				context.Url = _urlMapper.MapFileToUrl(file, context.Url);
             }
         }
 

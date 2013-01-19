@@ -5,17 +5,18 @@ using System.Linq;
 using System.Text;
 using MiniHttp.Server;
 using MiniHttp.RequestHandlers.Processing;
+using MiniHttp.Utilities;
 
 namespace MiniHttp.RequestHandlers
 {
     public class ProcessingFileHandler : IRequestHandler
     {
-        private readonly DirectoryInfo _rootDir;
+        private readonly IUrlMapper _urlMapper;
         private readonly List<Func<IProcessor>> _processorFactories;
 
-        public ProcessingFileHandler(DirectoryInfo rootDir)
+		public ProcessingFileHandler(IUrlMapper urlMapper)
         {
-            _rootDir = rootDir;
+			_urlMapper = urlMapper;
 			_processorFactories = new List<Func<IProcessor>>();
         }
 
@@ -23,11 +24,6 @@ namespace MiniHttp.RequestHandlers
         {
             _processorFactories.Add(processor);
             return this;
-        }
-
-        protected virtual FileInfo MapPath(string relativePath)
-        {
-            return new FileInfo(Path.Combine(_rootDir.FullName, relativePath));
         }
 
         protected virtual Stream Process(FileInfo input)
@@ -57,7 +53,7 @@ namespace MiniHttp.RequestHandlers
 
         public bool HandleRequest(RequestContext context)
         {
-            var file = MapPath(context.Url.AbsolutePath.Substring(1));
+            var file = _urlMapper.MapUrlToFile(context.Url);
             if (!file.Exists)
                 return false;
             

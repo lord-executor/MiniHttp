@@ -1,9 +1,4 @@
 TODO:
-- build script for different deployment artifacts:
-  - minimalistic static-files-only server
-  - standard server with general purpose configuration
-  - library (.dll)
-  - automatic update of assembly info
 - move default processors to a separate handler that reacts to specific URLs only (e.g. *.html.processed)
 - @url(...) replacement in template processor (make URL absolute to current webroot)
 - request/response abstraction
@@ -27,3 +22,8 @@ DONE:
 - fixing line source enumerator for recursive templates
 - return plain text exception information for failed requests
 - request preprocessor for .../ -> .../index.{something}
+- build script for different deployment artifacts:
+  - minimalistic static-files-only server
+  - standard server with general purpose configuration
+  - library (.dll)
+  - automatic update of assembly info

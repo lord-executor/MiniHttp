@@ -5,13 +5,14 @@ using System.Net;
 using System.Text;
 using MiniHttp.Server;
 using System.IO;
+using MiniHttp.Utilities;
 
 namespace MiniHttp.RequestHandlers
 {
     public class StaticFileHandler : ProcessingFileHandler
     {
-        public StaticFileHandler(DirectoryInfo rootDir)
-            : base(rootDir)
+        public StaticFileHandler(IUrlMapper urlMapper)
+			: base(urlMapper)
         {
         }
 
