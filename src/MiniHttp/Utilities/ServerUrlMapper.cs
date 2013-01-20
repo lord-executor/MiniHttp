@@ -25,7 +25,7 @@ namespace MiniHttp.Utilities
 			return new DirectoryInfo(Path.Combine(_webRoot.FullName, url.LocalPath.Substring(1)));
 		}
 
-		public Uri MapFileToUrl(FileSystemInfo file, Uri baseUri = null)
+		public Uri MapFileToUrl(FileSystemInfo file, Uri baseUri)
 		{
 			if (!file.FullName.StartsWith(_webRoot.FullName))
 				throw new InvalidOperationException("File path must refer to a path in the webroot");
