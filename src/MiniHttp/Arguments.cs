@@ -14,7 +14,7 @@ namespace MiniHttp
 		public string WebRoot { get; private set; }
 		public int Port { get; private set; }
 
-		public Arguments()
+		private Arguments()
 		{
 			SetDefaults();
 
