@@ -26,8 +26,15 @@
 <xsl:apply-templates select=".//cs:ItemGroup//cs:Compile"/>
 	</xsl:template>
 	
-	<xsl:template match="cs:Reference">/r:"<xsl:value-of select="@Include" />.dll"
-</xsl:template>
+	<xsl:template match="cs:Reference">
+		<xsl:variable name="ref">
+			<xsl:choose>
+				<xsl:when test="./cs:HintPath"><xsl:value-of select="$ProjectPath" />\<xsl:value-of select="./cs:HintPath" /></xsl:when>
+				<xsl:otherwise><xsl:value-of select="@Include" />.dll</xsl:otherwise>
+			</xsl:choose>
+		</xsl:variable>
+		<xsl:text>/r:"</xsl:text><xsl:value-of select="$ref" /><xsl:text>"&#xa;</xsl:text>
+	</xsl:template>
 
 	<xsl:template match="cs:EmbeddedResource">
 		<xsl:variable name="exclude">
