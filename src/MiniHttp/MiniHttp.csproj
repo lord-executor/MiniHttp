@@ -83,7 +83,6 @@
     <Compile Include="Server\RequestContext.cs" />
     <Compile Include="Server\RequestDelegates.cs" />
     <Compile Include="Server\RouteDefinition.cs" />
-    <Compile Include="Server\RouteInformation.cs" />
     <Compile Include="Utilities\IUrlMapper.cs" />
     <Compile Include="Utilities\ServerUrlMapper.cs" />
   </ItemGroup>
