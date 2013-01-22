@@ -54,6 +54,7 @@
     <Compile Include="Processors\TemplateProcessor.cs" />
     <Compile Include="Processors\VariableProcessor.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="RequestHandlers\DirectoryListingHandler.cs" />
     <Compile Include="RequestHandlers\Processing\FileSourceResolver.cs" />
     <Compile Include="RequestHandlers\Processing\LineSourceExtensions.cs" />
     <Compile Include="RequestHandlers\Processing\Results\Template.cs" />
@@ -83,11 +84,11 @@
     <Compile Include="Server\RequestContext.cs" />
     <Compile Include="Server\RequestDelegates.cs" />
     <Compile Include="Server\RouteDefinition.cs" />
-    <Compile Include="Server\RouteInformation.cs" />
     <Compile Include="Utilities\IUrlMapper.cs" />
     <Compile Include="Utilities\ServerUrlMapper.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="RequestHandlers\Resources\FileListing.html" />
     <Content Include="todo.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

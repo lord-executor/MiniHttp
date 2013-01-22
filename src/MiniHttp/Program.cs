@@ -68,6 +68,7 @@ namespace MiniHttp
 
 			_server.RegisterRoute(@"\.html($|\?)", new ProcessingFileHandler(serverMapper).AddProcessor(() => new TemplateProcessor()).AddProcessor(() => new VariableProcessor()));
 			_server.RegisterRoute(@".*", new StaticFileHandler(serverMapper));
+            _server.RegisterRoute(@".*", new DirectoryListingHandler(serverMapper));
 			_server.RegisterRoute(@".*", new NotFoundHandler());
 		}
 
