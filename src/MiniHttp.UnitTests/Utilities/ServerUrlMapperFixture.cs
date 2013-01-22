@@ -4,14 +4,39 @@ using System.Linq;
 using System.Text;
 using NUnit.Framework;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace MiniHttp.Utilities
 {
 	[TestFixture]
 	public class ServerUrlMapperFixture
 	{
-		private static readonly DirectoryInfo WebRoot = new DirectoryInfo(@"C:\some\web\root");
-		private static readonly IEnumerable<string> Paths = new[] { "/", "/test", "/test/file.txt" };
+        private static readonly DirectoryInfo WebRoot = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "testroot"));
+		private static readonly IEnumerable<string> Paths = new[] { "/", "/test/", "/test/file.txt" };
+
+        [TestFixtureSetUp]
+        public void FixtureSetUp()
+        {
+            WebRoot.Create();
+
+            var fileExp = new Regex(@"\.\w+$");
+            foreach (var path in Paths)
+            {
+                if (path == "/")
+                    continue;
+
+                if (fileExp.IsMatch(path))
+                    File.Create(Path.Combine(WebRoot.FullName, path.Substring(1))).Close();
+                else
+                    Directory.CreateDirectory(Path.Combine(WebRoot.FullName, path.Substring(1)));
+            }
+        }
+
+        [TestFixtureTearDown]
+        public void FixtureTearDown()
+        {
+            WebRoot.Delete(true);
+        }
 
 		[Test]
 		public void TestMapUrlToFileAndDirectory()

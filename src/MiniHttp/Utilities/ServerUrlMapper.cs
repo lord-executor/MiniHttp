@@ -31,8 +31,8 @@ namespace MiniHttp.Utilities
 				throw new InvalidOperationException("File path must refer to a path in the webroot");
 
             var path = file.FullName.Substring(_webRoot.FullName.Length);
-            if (file.Attributes.HasFlag(FileAttributes.Directory))
-		        path = String.Format("{0}/", path);
+            if ((int)file.Attributes != -1 && file.Attributes.HasFlag(FileAttributes.Directory) && !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                path = String.Format("{0}{1}", path, Path.DirectorySeparatorChar);
 
 			if (baseUri == null)
                 return new Uri(path, UriKind.Relative);
