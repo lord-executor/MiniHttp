@@ -136,7 +136,6 @@ namespace MiniHttp
 			Console.Write(" (minimal)");
 #endif
 
-			var version = attributes.OfType<AssemblyVersionAttribute>().FirstOrDefault();
 			Console.Write(" version {0}", assembly.GetName().Version);
 			Console.WriteLine();
 

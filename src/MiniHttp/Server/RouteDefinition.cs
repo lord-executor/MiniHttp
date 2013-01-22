@@ -20,7 +20,7 @@ namespace MiniHttp.Server
 
         public bool TryRoute(RequestContext context)
         {
-            var match = MatchExpression.Match(context.Request.Url.PathAndQuery);
+            var match = MatchExpression.Match(context.Url.PathAndQuery);
             if (match.Success)
             {
                 if (Handler(context))

@@ -81,8 +81,10 @@
     <Compile Include="Server\IRequestHook.cs" />
     <Compile Include="Server\IResponse.cs" />
     <Compile Include="Server\MimeTypes.cs" />
+    <Compile Include="Server\Request.cs" />
     <Compile Include="Server\RequestContext.cs" />
     <Compile Include="Server\RequestDelegates.cs" />
+    <Compile Include="Server\Response.cs" />
     <Compile Include="Server\RouteDefinition.cs" />
     <Compile Include="Utilities\IUrlMapper.cs" />
     <Compile Include="Utilities\ServerUrlMapper.cs" />
