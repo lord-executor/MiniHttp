@@ -30,10 +30,14 @@ namespace MiniHttp.Utilities
 			if (!file.FullName.StartsWith(_webRoot.FullName))
 				throw new InvalidOperationException("File path must refer to a path in the webroot");
 
-			if (baseUri == null)
-				return new Uri(file.FullName.Substring(_webRoot.FullName.Length), UriKind.Relative);
+            var path = file.FullName.Substring(_webRoot.FullName.Length);
+            if (file.Attributes.HasFlag(FileAttributes.Directory))
+		        path = String.Format("{0}/", path);
 
-			return new Uri(baseUri, file.FullName.Substring(_webRoot.FullName.Length));
+			if (baseUri == null)
+                return new Uri(path, UriKind.Relative);
+
+            return new Uri(baseUri, path);
 		}
 	}
 }
