@@ -1,3 +1,0 @@
-xsltproc build/transform.xslt src/MiniHttp/MiniHttp.csproj > bin/tmp/MiniHttp.exe.compile
-cat bin/tmp/MiniHttp.exe.compile | sed -e 's/\//-/' -e 's/\\/\//g' > bin/tmp/MiniHttp.exe.compile2
-mono-csc @"tmp/MiniHttp.exe.compile2"
