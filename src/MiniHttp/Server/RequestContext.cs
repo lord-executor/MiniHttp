@@ -21,5 +21,13 @@ namespace MiniHttp.Server
             Response = new Response(context.Response);
             Errors = new List<Exception>();
         }
+
+        public RequestContext(Uri url, IRequest request, IResponse response)
+        {
+            OriginalUri = Url = url;
+            Request = request;
+            Response = response;
+            Errors = new List<Exception>();
+        }
     }
 }
