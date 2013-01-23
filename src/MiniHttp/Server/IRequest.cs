@@ -15,5 +15,7 @@ namespace MiniHttp.Server
 		Uri UrlReferrer { get; }
 		string ContentType { get; }
 		Stream InputStream { get; }
+        IDictionary<string, string> Headers { get; }
+        CookieCollection Cookies { get; }
     }
 }

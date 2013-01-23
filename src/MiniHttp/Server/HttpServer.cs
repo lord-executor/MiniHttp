@@ -118,7 +118,7 @@ namespace MiniHttp.Server
         {
             Console.WriteLine("{0} @ {1} {2}", context.Request.RemoteEndPoint.Address, context.Request.HttpMethod, context.Url);
 
-            context.Response.AddHeader("Cache-Control", "no-cache");
+            context.Response.Headers["Cache-Control"]= "no-cache";
 
             try
             {

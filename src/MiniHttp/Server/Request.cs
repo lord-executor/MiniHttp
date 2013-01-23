@@ -41,12 +41,17 @@ namespace MiniHttp.Server
 			get { return _request.InputStream; }
 		}
 
-		public IDictionary<string, string> Headers { get; private set; }
+        public IDictionary<string, string> Headers { get; private set; }
 
-		public Request(HttpListenerRequest request)
+	    public CookieCollection Cookies
+	    {
+            get { return _request.Cookies; }
+	    }
+
+	    public Request(HttpListenerRequest request)
 		{
 			_request = request;
-			Headers = request.Headers.Cast<string>().ToDictionary(key => key, key => request.Headers[key]);
+            Headers = request.Headers.Cast<string>().ToDictionary(key => key, key => request.Headers[key]);
 		}
 	}
 }

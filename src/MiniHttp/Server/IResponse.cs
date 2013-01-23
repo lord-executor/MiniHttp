@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.IO;
 
@@ -13,8 +14,9 @@ namespace MiniHttp.Server
 		string RedirectLocation { get; set; }
         Stream OutputStream { get; }
         TextWriter Output { get; }
-
-		void AddHeader(string name, string value);
+        long ContentLength { get; }
+        IDictionary<string, string> Headers { get; }
+        CookieCollection Cookies { get; }
 
 		void Send();
     }

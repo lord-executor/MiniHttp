@@ -32,23 +32,42 @@ namespace MiniHttp.Server
 
 		public TextWriter Output { get; private set; }
 
-		public Response(HttpListenerResponse response)
+	    public long ContentLength
+	    {
+            get
+            {
+                if (OutputStream != null)
+                    throw new InvalidOperationException("Response has not been sent yet");
+
+                return _response.ContentLength64;
+            }
+	    }
+
+        public IDictionary<string, string> Headers { get; private set; }
+
+	    public CookieCollection Cookies
+	    {
+            get { return _response.Cookies; }
+	    }
+
+	    public Response(HttpListenerResponse response)
 		{
 			_response = response;
 			OutputStream = new MemoryStream();
 			Output = new StreamWriter(OutputStream);
+            Headers = new Dictionary<string, string>();
 
 			StatusCode = 200;
-		}
-
-		public void AddHeader(string name, string value)
-		{
-			_response.AddHeader(name, value);
 		}
 
 		public void Send()
 		{
 			Output.Flush();
+
+            foreach (var kvp in Headers)
+            {
+                _response.Headers[kvp.Key] = kvp.Value;
+            }
 
 			_response.ContentLength64 = OutputStream.Length;
 			_response.SendChunked = false;
