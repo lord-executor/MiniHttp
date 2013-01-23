@@ -1,7 +1,6 @@
 TODO:
 - move default processors to a separate handler that reacts to specific URLs only (e.g. *.html.processed)
 - @url(...) replacement in template processor (make URL absolute to current webroot)
-- request/response abstraction
 - documentation (wiki pages)
   - user how-to (minimalistic and general purpose server)
   - general architecture
@@ -27,3 +26,4 @@ DONE:
   - automatic update of assembly info
 - refactoring of line source into interface + extension method(s)
 - handler for directory listing (in absence of index file)
+- request/response abstraction
