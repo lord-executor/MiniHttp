@@ -68,6 +68,7 @@ Task CompileTests -Depends Init,CompileFull,PrepareTests {
 
 Task PrepareTests -Depends Init,CompileFull {
 	Copy-Item (Join-Path $rootPath "lib/nunit.framework.dll") $testDir
+	Copy-Item (Join-Path $rootPath "lib/Moq.dll") $testDir
 	Copy-Item (Join-Path $outputDir "MiniHttp.exe") $testDir
 }
 
