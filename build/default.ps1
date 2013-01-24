@@ -73,7 +73,7 @@ Task PrepareTests -Depends Init,CompileFull {
 }
 
 Task Test -Depends PrepareTests,CompileTests {
-	Exec { &$nunit /noresult /framework="4.0" "$testDir/MiniHttp.UnitTests.dll" }
+	Exec { &$nunit /noresult /exclude="disposal" /framework="4.0" "$testDir/MiniHttp.UnitTests.dll" }
 }
 
 Task Clean {

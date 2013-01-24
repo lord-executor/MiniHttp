@@ -8,11 +8,18 @@ namespace MiniHttp.RequestHandlers.Processing
     public class DummyLineSource : LineSource
     {
         private readonly List<Line> _lines;
+        private readonly Action<bool> _disposeCallback;
 
         public DummyLineSource(ISourceResolver resolver)
             : base(resolver)
         {
             _lines = new List<Line>();
+        }
+
+        public DummyLineSource(ISourceResolver resolver, Action<bool> disposeCallback)
+            : base(resolver)
+        {
+            _disposeCallback = disposeCallback;
         }
 
         public DummyLineSource(ISourceResolver resolver, IEnumerable<string> lines)
@@ -29,6 +36,13 @@ namespace MiniHttp.RequestHandlers.Processing
         public void Add(string line)
         {
             _lines.Add(new Line(this, line));
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (_disposeCallback != null)
+                _disposeCallback(disposing);
+            base.Dispose(disposing);
         }
     }
 }

@@ -54,6 +54,7 @@
     <Compile Include="RequestHandlers\Processing\DummyLineSource.cs" />
     <Compile Include="RequestHandlers\Processing\LineFixture.cs" />
     <Compile Include="RequestHandlers\Processing\LineIteratorFixture.cs" />
+    <Compile Include="RequestHandlers\Processing\LineSourceFixture.cs" />
     <Compile Include="Server\RouteDefinitionFixture.cs" />
     <Compile Include="Utilities\ServerUrlMapperFixture.cs" />
   </ItemGroup>
