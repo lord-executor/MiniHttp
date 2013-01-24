@@ -17,7 +17,7 @@ namespace MiniHttp.RequestHandlers.Processing
         }
 
         public DummyLineSource(ISourceResolver resolver, Action<bool> disposeCallback)
-            : base(resolver)
+            : this(resolver)
         {
             _disposeCallback = disposeCallback;
         }
