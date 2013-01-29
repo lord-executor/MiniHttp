@@ -7,14 +7,14 @@ namespace MiniHttp.RequestHandlers.Processing
 {
 	public static class LineSourceExtensions
 	{
-		public static LineIterator GetLineIterator(this ILineSource source)
+        public static ILineIterator GetLineIterator(this ILineSource source)
 		{
 			return new LineIterator(source);
 		}
 
 		#region LineSourceEnumerator
 
-		public class LineIterator : IEnumerator<Line>
+		private class LineIterator : ILineIterator
 		{
 			private readonly Stack<SourceWrapper> _currentEnumerator;
 			private Line _currentLine;

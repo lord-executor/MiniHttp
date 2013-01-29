@@ -141,7 +141,7 @@ namespace MiniHttp.RequestHandlers.Processing
         private class IteratorHelper
         {
             private readonly IList<Line> _lines;
-            public LineSourceExtensions.LineIterator Iterator { get; private set; }
+            public ILineIterator Iterator { get; private set; }
             public IEnumerable<string> RawLines
             {
                 get { return _lines.Select(l => l.Value); }

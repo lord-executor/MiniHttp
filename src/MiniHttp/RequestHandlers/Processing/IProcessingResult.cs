@@ -7,6 +7,6 @@ namespace MiniHttp.RequestHandlers.Processing
 {
     public interface IProcessingResult
     {
-        Line Apply(LineSourceExtensions.LineIterator iterator);
+        Line Apply(ILineIterator iterator);
     }
 }

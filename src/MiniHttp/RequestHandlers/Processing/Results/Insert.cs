@@ -16,7 +16,7 @@ namespace MiniHttp.RequestHandlers.Processing.Results
 
         #region IProcessingResult Members
 
-		public Line Apply(LineSourceExtensions.LineIterator iterator)
+        public Line Apply(ILineIterator iterator)
         {
 			iterator.Insert(_source);
             return null;
