@@ -52,6 +52,7 @@
     <Compile Include="ArgumentsFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandlers\Processing\DummyLineSource.cs" />
+    <Compile Include="RequestHandlers\Processing\FileSourceResolverFixture.cs" />
     <Compile Include="RequestHandlers\Processing\LineFixture.cs" />
     <Compile Include="RequestHandlers\Processing\LineIteratorFixture.cs" />
     <Compile Include="RequestHandlers\Processing\LineSourceFixture.cs" />

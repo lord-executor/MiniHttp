@@ -48,6 +48,7 @@ namespace MiniHttp.RequestHandlers.Processing
         }
 
         [Test]
+		[IgnoreAttribute]
         [Category("disposal")] // the WaitForPendingFinalizers call crashes the NUnit console runner
         public void TestFinalizerDisposal()
         {
