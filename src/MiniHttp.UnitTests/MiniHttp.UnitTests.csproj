@@ -50,6 +50,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentsFixture.cs" />
+    <Compile Include="Processors\Commands\CommandTestFixture.cs" />
+    <Compile Include="Processors\Commands\ContentTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestHandlers\Processing\DummyLineSource.cs" />
     <Compile Include="RequestHandlers\Processing\FileSourceResolverFixture.cs" />
