@@ -10,15 +10,23 @@ namespace MiniHttp.Server
     {
         public Uri OriginalUri { get; private set; }
         public Uri Url { get; set; }
-        public HttpListenerRequest Request { get; private set; }
-        public HttpListenerResponse Response { get; private set; }
+        public IRequest Request { get; private set; }
+        public IResponse Response { get; private set; }
         public IList<Exception> Errors { get; private set; } 
 
         public RequestContext(HttpListenerContext context)
         {
-            Request = context.Request;
-            Response = context.Response;
-            OriginalUri = Url = Request.Url;
+			OriginalUri = Url = context.Request.Url;
+            Request = new Request(context.Request);
+            Response = new Response(context.Response);
+            Errors = new List<Exception>();
+        }
+
+        public RequestContext(Uri url, IRequest request, IResponse response)
+        {
+            OriginalUri = Url = url;
+            Request = request;
+            Response = response;
             Errors = new List<Exception>();
         }
     }

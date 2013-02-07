@@ -116,9 +116,9 @@ namespace MiniHttp.Server
 
         private void ProcessRequest(RequestContext context)
         {
-            Console.WriteLine("{0} @ {1} {2}", context.Request.RemoteEndPoint.Address, context.Request.HttpMethod, context.Request.Url);
+            Console.WriteLine("{0} @ {1} {2}", context.Request.RemoteEndPoint.Address, context.Request.HttpMethod, context.Url);
 
-            context.Response.AddHeader("Cache-Control", "no-cache");
+            context.Response.Headers["Cache-Control"]= "no-cache";
 
             try
             {
@@ -151,7 +151,7 @@ namespace MiniHttp.Server
 
             try
             {
-                context.Response.Close();
+                context.Response.Send();
             }
             catch (Exception e)
             {

@@ -10,6 +10,6 @@ namespace MiniHttp.Utilities
 	{
 		FileInfo MapUrlToFile(Uri url);
 		DirectoryInfo MapUrlToDirectory(Uri url);
-		Uri MapFileToUrl(FileSystemInfo fileOrDir, Uri baseUri = null);
+		Uri MapFileToUrl(FileSystemInfo fileOrDir, Uri baseUri);
 	}
 }

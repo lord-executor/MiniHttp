@@ -46,6 +46,7 @@ namespace MiniHttp.RequestHandlers.Processing
         public void Dispose()
         {
             Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)
