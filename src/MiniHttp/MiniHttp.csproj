@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arguments.cs" />
+    <Compile Include="Configuration\Server.cs" />
     <Compile Include="NDesk.Options\Options.cs" />
     <Compile Include="Processors\BasicCommandProcessor.cs" />
     <Compile Include="Processors\Commands\Command.cs" />
