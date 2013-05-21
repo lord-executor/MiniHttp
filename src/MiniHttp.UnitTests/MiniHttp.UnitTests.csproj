@@ -50,7 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentsFixture.cs" />
-    <Compile Include="Configuration\ServerFixture.cs" />
+    <Compile Include="Configuration\ConfigurationFixture.cs" />
     <Compile Include="Processors\Commands\CommandExtractorFixture.cs" />
     <Compile Include="Processors\Commands\CommandTestFixture.cs" />
     <Compile Include="Processors\Commands\ContentTestFixture.cs" />

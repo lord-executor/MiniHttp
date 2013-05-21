@@ -13,6 +13,12 @@ namespace MiniHttp.Configuration
         [XmlAttribute("port")]
         public int Port { get; set; }
 
+        [XmlElement("preHook")]
+        public Hook[] PreHooks { get; set; }
+
+        [XmlElement("postHook")]
+        public Hook[] PostHooks { get; set; }
+
         public static Server LoadConfig(TextReader reader)
         {
             var serializer = new XmlSerializer(typeof(Server));

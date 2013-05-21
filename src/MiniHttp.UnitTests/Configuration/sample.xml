@@ -1,3 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <server port="42">
+  <preHook type="pre-hook-type" />
+  <postHook type="post-hook-type" />
 </server>
