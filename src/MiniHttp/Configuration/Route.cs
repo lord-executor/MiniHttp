@@ -7,8 +7,11 @@ using System.Xml.Serialization;
 
 namespace MiniHttp.Configuration
 {
-    public class Hook : Instantiatable<IRequestHook>
+    public class Route : Instantiatable<IRequestHandler>
     {
+        [XmlAttribute("expression")]
+        public string RouteExpression { get; set; }
+
         [XmlAttribute("type")]
         public string Type
         {

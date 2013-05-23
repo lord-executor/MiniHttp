@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="Arguments.cs" />
     <Compile Include="Configuration\Hook.cs" />
+    <Compile Include="Configuration\Instantiatable.cs" />
+    <Compile Include="Configuration\Route.cs" />
     <Compile Include="Configuration\Server.cs" />
     <Compile Include="NDesk.Options\Options.cs" />
     <Compile Include="Processors\BasicCommandProcessor.cs" />

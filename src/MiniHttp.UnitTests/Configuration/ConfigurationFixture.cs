@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using MiniHttp.Server;
+using MiniHttp.Utilities;
+using Moq;
+using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,21 +30,60 @@ namespace MiniHttp.Configuration
         }
 
         [Test]
-        public void TestPreHooks()
+        public void TestLoadPreHooks()
         {
             var config = GetSampleConfig();
             Assert.NotNull(config.PreHooks);
             Assert.AreEqual(1, config.PreHooks.Length);
-            Assert.AreEqual("pre-hook-type", config.PreHooks[0].TypeName);
+            Assert.AreEqual("pre-hook-type", config.PreHooks[0].Type);
         }
 
         [Test]
-        public void TestPostHooks()
+        public void TestLoadPostHooks()
         {
             var config = GetSampleConfig();
             Assert.NotNull(config.PostHooks);
             Assert.AreEqual(1, config.PostHooks.Length);
-            Assert.AreEqual("post-hook-type", config.PostHooks[0].TypeName);
+            Assert.AreEqual("post-hook-type", config.PostHooks[0].Type);
+        }
+
+        [Test]
+        public void TestLoadRoute()
+        {
+            var config = GetSampleConfig();
+            Assert.NotNull(config.Routes);
+            Assert.AreEqual(2, config.Routes.Length);
+            Assert.AreEqual("*.html", config.Routes[0].RouteExpression);
+        }
+
+        [Test]
+        public void TestInstantiateWithDefaultConstructor()
+        {
+            var config = GetSampleConfig();
+            var mapperMock = new Mock<IUrlMapper>(MockBehavior.Strict);
+            
+            var handler = config.Routes[0].Instantiate(mapperMock.Object);
+            Assert.NotNull(handler);
+            Assert.IsInstanceOf<DummyHandler>(handler);
+            mapperMock.VerifyAll();
+        }
+
+        [Test]
+        public void TestInstantiateWithUrlMapper()
+        {
+            var config = GetSampleConfig();
+            var mapperMock = new Mock<IUrlMapper>(MockBehavior.Strict);
+
+            var handler = config.Routes[1].Instantiate(mapperMock.Object);
+            Assert.NotNull(handler);
+            Assert.IsInstanceOf<DummyHandlerWithMapper>(handler);
+            Assert.AreEqual(mapperMock.Object, (handler as DummyHandlerWithMapper).Mapper);
+            mapperMock.VerifyAll();
+        }
+
+        [Test]
+        public void TestInstantiateWithProcessors()
+        {
         }
     }
 }

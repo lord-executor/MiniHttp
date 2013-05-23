@@ -51,6 +51,8 @@
   <ItemGroup>
     <Compile Include="ArgumentsFixture.cs" />
     <Compile Include="Configuration\ConfigurationFixture.cs" />
+    <Compile Include="Configuration\DummyHandler.cs" />
+    <Compile Include="Configuration\DummyHandlerWithMapper.cs" />
     <Compile Include="Processors\Commands\CommandExtractorFixture.cs" />
     <Compile Include="Processors\Commands\CommandTestFixture.cs" />
     <Compile Include="Processors\Commands\ContentTestFixture.cs" />

@@ -19,6 +19,9 @@ namespace MiniHttp.Configuration
         [XmlElement("postHook")]
         public Hook[] PostHooks { get; set; }
 
+        [XmlElement("route")]
+        public Route[] Routes { get; set; }
+
         public static Server LoadConfig(TextReader reader)
         {
             var serializer = new XmlSerializer(typeof(Server));

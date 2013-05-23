@@ -2,4 +2,6 @@
 <server port="42">
   <preHook type="pre-hook-type" />
   <postHook type="post-hook-type" />
+  <route expression="*.html" type="MiniHttp.Configuration.DummyHandler, MiniHttp.UnitTests" />
+  <route expression="*.txt" type="MiniHttp.Configuration.DummyHandlerWithMapper, MiniHttp.UnitTests" />
 </server>
