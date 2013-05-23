@@ -1,9 +1,11 @@
-﻿using System;
+﻿using MiniHttp.Server;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml.Serialization;
+using MiniHttp.Utilities;
 
 namespace MiniHttp.Configuration
 {
@@ -26,6 +28,16 @@ namespace MiniHttp.Configuration
         {
             var serializer = new XmlSerializer(typeof(Server));
             return (Server)serializer.Deserialize(reader);
+        }
+
+        public void RegisterServerModules(HttpServer server, IUrlMapper mapper)
+        {
+            if (PreHooks != null)
+                PreHooks.Select(hook => hook.Instantiate(mapper)).Each( server.RegisterPreHook);
+            if (PostHooks != null)
+                PostHooks.Select(hook => hook.Instantiate(mapper)).Each(server.RegisterPostHook);
+
+            Routes.Each(route => server.RegisterRoute(route.RouteExpression, route.Instantiate(mapper)));
         }
     }
 }

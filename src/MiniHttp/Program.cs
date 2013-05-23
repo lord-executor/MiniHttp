@@ -24,6 +24,7 @@ namespace MiniHttp
 
 		private readonly Arguments _arguments;
 		private HttpServer _server;
+        private Configuration.Server _config;
 
 		private Program(Arguments arguments)
 		{
@@ -33,21 +34,35 @@ namespace MiniHttp
 
 		private void StartServer()
 		{
-			_server = new HttpServer(_arguments.Port);
-			RegisterModules();
+            var webroot = new DirectoryInfo(_arguments.WebRoot);
+            if (!webroot.Exists)
+                throw new DirectoryNotFoundException(String.Format(webroot.FullName));
+
+            var serverMapper = new ServerUrlMapper(webroot);
+
+            var configPath = Path.Combine(webroot.FullName, "webroot.xml");
+            if (File.Exists(configPath))
+                _config = Configuration.Server.LoadConfig(File.OpenText(configPath));
+
+			_server = new HttpServer(_config == null || _arguments.ExplicitPort ? _arguments.Port : _config.Port);
+
+            RegisterModules(serverMapper);
+
 			_server.Start();
 		}
 
+        private void RegisterModules(IUrlMapper serverMapper)
+        {
+            if (_config == null)
+                RegisterDefaultModules(serverMapper);
+            else
+                _config.RegisterServerModules(_server, serverMapper);
+        }
+
 #if MINIMAL
 
-		private void RegisterModules()
+		private void RegisterDefaultModules(IUrlMapper serverMapper)
 		{
-			var webroot = new DirectoryInfo(_arguments.WebRoot);
-			if (!webroot.Exists)
-				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
-
-			var serverMapper = new ServerUrlMapper(webroot);
-
             _server.RegisterPostHook(new ServerError());
 			_server.RegisterRoute(@".*", new StaticFileHandler(serverMapper));
 			_server.RegisterRoute(@".*", new NotFoundHandler());
@@ -55,14 +70,8 @@ namespace MiniHttp
 
 #else
 
-		private void RegisterModules()
+        private void RegisterDefaultModules(IUrlMapper serverMapper)
 		{
-			var webroot = new DirectoryInfo(_arguments.WebRoot);
-			if (!webroot.Exists)
-				throw new DirectoryNotFoundException(String.Format(webroot.FullName));
-
-			var serverMapper = new ServerUrlMapper(webroot);
-
 			_server.RegisterPreHook(new IndexRouting(serverMapper));
 			_server.RegisterPostHook(new ServerError());
 

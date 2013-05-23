@@ -93,6 +93,7 @@
     <Compile Include="Server\RequestDelegates.cs" />
     <Compile Include="Server\Response.cs" />
     <Compile Include="Server\RouteDefinition.cs" />
+    <Compile Include="Utilities\EnumerableExtensions.cs" />
     <Compile Include="Utilities\IUrlMapper.cs" />
     <Compile Include="Utilities\ServerUrlMapper.cs" />
   </ItemGroup>
