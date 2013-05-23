@@ -47,6 +47,7 @@
     <Compile Include="Arguments.cs" />
     <Compile Include="Configuration\Hook.cs" />
     <Compile Include="Configuration\Instantiatable.cs" />
+    <Compile Include="Configuration\Processor.cs" />
     <Compile Include="Configuration\Route.cs" />
     <Compile Include="Configuration\Server.cs" />
     <Compile Include="NDesk.Options\Options.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="RequestHooks\ServerError.cs" />
     <Compile Include="Server\HttpServer.cs" />
     <Compile Include="Server\HttpServerException.cs" />
+    <Compile Include="Server\IProcessingHandler.cs" />
     <Compile Include="Server\IRequest.cs" />
     <Compile Include="Server\IRequestHandler.cs" />
     <Compile Include="Server\IRequestHook.cs" />

@@ -9,7 +9,7 @@ using MiniHttp.Utilities;
 
 namespace MiniHttp.RequestHandlers
 {
-    public class ProcessingFileHandler : IRequestHandler
+    public class ProcessingFileHandler : IProcessingHandler
     {
         private readonly IUrlMapper _urlMapper;
         private readonly List<Func<IProcessor>> _processorFactories;
@@ -20,7 +20,7 @@ namespace MiniHttp.RequestHandlers
 			_processorFactories = new List<Func<IProcessor>>();
         }
 
-		public ProcessingFileHandler AddProcessor(Func<IProcessor> processor)
+        public IProcessingHandler AddProcessor(Func<IProcessor> processor)
         {
             _processorFactories.Add(processor);
             return this;

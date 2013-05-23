@@ -52,8 +52,9 @@ namespace MiniHttp.Configuration
         {
             var config = GetSampleConfig();
             Assert.NotNull(config.Routes);
-            Assert.AreEqual(2, config.Routes.Length);
+            Assert.AreEqual(3, config.Routes.Length);
             Assert.AreEqual("*.html", config.Routes[0].RouteExpression);
+            Assert.Null(config.Routes[0].Processors);
         }
 
         [Test]
@@ -84,6 +85,19 @@ namespace MiniHttp.Configuration
         [Test]
         public void TestInstantiateWithProcessors()
         {
+            var config = GetSampleConfig();
+            var mapperMock = new Mock<IUrlMapper>(MockBehavior.Strict);
+
+            var handler = config.Routes[2].Instantiate(mapperMock.Object);
+            Assert.NotNull(handler);
+            Assert.IsInstanceOf<DummyHandlerWithProcessors>(handler);
+            var processingHandler = handler as DummyHandlerWithProcessors;
+
+            Assert.AreEqual(mapperMock.Object, processingHandler.Mapper);
+            Assert.AreEqual(2, processingHandler.Processors.Count());
+            Assert.IsInstanceOf<DummyProcessor>(processingHandler.Processors.First());
+            Assert.IsInstanceOf<DummyProcessor>(processingHandler.Processors.Skip(1).First());
+            mapperMock.VerifyAll();
         }
     }
 }
