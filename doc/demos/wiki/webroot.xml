@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<server port="8888">
+	<preHook type="MiniHttp.RequestHooks.IndexRouting" />
+	<route expression="\.md($|\?)" type="MiniHttp.Plugins.RequestHandlers.MarkdownHandler, MiniHttp.Plugins" />
+	<route expression=".*" type="MiniHttp.RequestHandlers.StaticFileHandler" />
+	<route expression=".*" type="MiniHttp.RequestHandlers.DirectoryListingHandler" />
+	<route expression=".*" type="MiniHttp.RequestHandlers.NotFoundHandler" />
+	<postHook type="MiniHttp.RequestHooks.ServerError" />
+</server>
