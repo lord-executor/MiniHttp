@@ -14,7 +14,7 @@ properties {
 
 Task Default -Depends Compile,Test
 
-Task Compile -Depends Clean,Init,CompileFull,CompileMinimal,CompileLibrary
+Task Compile -Depends Clean,Init,CompileFull,CompileMinimal,CompileLibrary,CompilePlugins
 
 Task CompileFull -Depends Init,AssemblyInfo {
 	$proj = Join-Path $rootPath "src/MiniHttp/MiniHttp.csproj"
@@ -44,6 +44,16 @@ Task CompileLibrary -Depends Init,AssemblyInfo {
 	
 	Exec { &$xslt $proj $projTransform -o "$paramsFile" ProjectPath="$projPath" OutputName="$outName" OutputDir="$outputDir" Debug="false" OutputType="library" ExcludeFiles="Program.cs,Arguments.cs,NDesk.Options" }
 	Exec { &$csc /noconfig "@$paramsFile" "$tmpDir\AssemblyInfo.cs" }
+}
+
+Task CompilePlugins -Depends Init,AssemblyInfo {
+	$proj = Join-Path $rootPath "src/MiniHttp.Plugins/MiniHttp.Plugins.csproj"
+	$projPath = Split-Path $proj
+	$outName = "MiniHttp.Plugins.dll"
+	$paramsFile = Join-Path $tmpDir "$outName.compile"
+	
+	Exec { &$xslt $proj $projTransform -o "$paramsFile" ProjectPath="$projPath" OutputName="$outName" OutputDir="$outputDir" Debug="false" OutputType="library" }
+	Exec { &$csc /noconfig /r:"$outputDir/MiniHttp.exe" "@$paramsFile" "$tmpDir\AssemblyInfo.cs" }
 }
 
 Task AssemblyInfo -Depends Init {
