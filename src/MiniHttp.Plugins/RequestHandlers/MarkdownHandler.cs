@@ -1,4 +1,6 @@
-﻿using MiniHttp.RequestHandlers;
+﻿using MarkdownSharp;
+using MiniHttp.RequestHandlers;
+using MiniHttp.RequestHandlers.Processing;
 using MiniHttp.Server;
 using MiniHttp.Utilities;
 using System;
@@ -17,9 +19,26 @@ namespace MiniHttp.Plugins.RequestHandlers
         {
         }
 
-        protected override Stream Process(FileInfo input)
+        protected override Stream Process(ISourceResolver resolver, Stream inputStream)
         {
-            return input.OpenRead();
+            var options = new MarkdownOptions();
+            options.EmptyElementSuffix = " />";
+            var markdown = new Markdown(options);
+            string transformed;
+
+            using (var reader = new StreamReader(inputStream))
+            {
+                transformed = markdown.Transform(reader.ReadToEnd());
+            }
+
+            var transformedStream = new MemoryStream(transformed.Length);
+            var writer = new StreamWriter(transformedStream);
+            writer.Write(transformed);
+            writer.Flush();
+
+            transformedStream.Seek(0, SeekOrigin.Begin);
+
+            return transformedStream; //base.Process(resolver, transformedStream);
         }
     }
 }

@@ -15,10 +15,5 @@ namespace MiniHttp.RequestHandlers
 			: base(urlMapper)
         {
         }
-
-        protected override Stream Process(FileInfo input)
-        {
-            return input.OpenRead();
-        }
     }
 }

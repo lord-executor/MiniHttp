@@ -26,14 +26,13 @@ namespace MiniHttp.RequestHandlers
             return this;
         }
 
-        protected virtual Stream Process(FileInfo input)
+        protected virtual Stream Process(ISourceResolver resolver, Stream inputStream)
         {
-            var resolver = new FileSourceResolver(input);
             var output = new MemoryStream();
             var writer = new StreamWriter(output);
 			var processors = _processorFactories.Select(f => f()).ToList();
 
-            using (var source = new StreamLineSource(input.OpenRead(), resolver))
+            using (var source = new StreamLineSource(inputStream, resolver))
             {
                 var iterator = source.GetLineIterator();
                 while (iterator.MoveNext())
@@ -58,7 +57,7 @@ namespace MiniHttp.RequestHandlers
                 return false;
             
             context.Response.ContentType = MimeTypes.GetMimeType(file.Extension);
-            using (var content = Process(file))
+            using (var content = Process(new FileSourceResolver(file), file.OpenRead()))
             {
                 content.CopyTo(context.Response.OutputStream);
             }
