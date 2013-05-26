@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using MiniHttp.Utilities;
 
 namespace MiniHttp.RequestHandlers.Processing
 {
     public class FileSourceResolver : ISourceResolver
     {
+        private readonly IUrlMapper _mapper;
         private readonly string _basePath;
 
-        public FileSourceResolver(FileInfo file)
+        public FileSourceResolver(IUrlMapper mapper, FileInfo file)
         {
+            _mapper = mapper;
             _basePath = file.DirectoryName;
         }
 
@@ -19,8 +22,13 @@ namespace MiniHttp.RequestHandlers.Processing
 
 		public ILineSource CreateSource(string path)
         {
-            var file = new FileInfo(Path.Combine(_basePath, path));
-            return new StreamLineSource(file.OpenRead(), new FileSourceResolver(file));
+            FileInfo file;
+
+            if (path.StartsWith("/"))
+                file = _mapper.MapUrlToFile(new UrlPath(path));
+            else
+                file = new FileInfo(Path.Combine(_basePath, path));
+            return new StreamLineSource(file.OpenRead(), new FileSourceResolver(_mapper, file));
         }
 
         #endregion

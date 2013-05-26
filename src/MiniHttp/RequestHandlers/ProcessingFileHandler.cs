@@ -52,12 +52,12 @@ namespace MiniHttp.RequestHandlers
 
         public bool HandleRequest(RequestContext context)
         {
-            var file = _urlMapper.MapUrlToFile(context.Url);
+            var file = _urlMapper.MapUrlToFile(context.Url.GetPath());
             if (!file.Exists)
                 return false;
             
             context.Response.ContentType = MimeTypes.GetMimeType(file.Extension);
-            using (var content = Process(new FileSourceResolver(file), file.OpenRead()))
+            using (var content = Process(new FileSourceResolver(_urlMapper, file), file.OpenRead()))
             {
                 content.CopyTo(context.Response.OutputStream);
             }
