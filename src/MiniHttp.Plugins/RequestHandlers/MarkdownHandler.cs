@@ -24,14 +24,14 @@ namespace MiniHttp.Plugins.RequestHandlers
         public override bool HandleRequest(RequestContext context)
         {
             var file = _urlMapper.MapUrlToFile(context.Url.GetPath());
-            if (!file.Exists)
+            if (file.Exists && file.Extension != ".md")
+                return false;
+            
+            if (File.Exists(String.Format("{0}.md", file.FullName)))
             {
-                if (File.Exists(String.Format("{0}.md", file.FullName)))
-                {
-                    var builder = new UriBuilder(context.Url);
-                    builder.Path += ".md";
-                    context.Url = builder.Uri;
-                }
+                var builder = new UriBuilder(context.Url);
+                builder.Path += ".md";
+                context.Url = builder.Uri;
             }
 
             var handled = base.HandleRequest(context);

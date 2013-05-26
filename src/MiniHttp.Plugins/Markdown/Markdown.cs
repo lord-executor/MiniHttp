@@ -1274,7 +1274,7 @@ namespace MarkdownSharp
 
         private static Regex _codeBlock = new Regex(string.Format(@"
                     (?:\n\n|\A\n?)
-                    (                        # $1 = the code block -- one or more lines, starting with a space
+                    (?<code>                 # $1 = the code block -- one or more lines, starting with a space
                     (?:
                         (?:[ ]{{{0}}})       # Lines must start with a tab-width of spaces
                         .*\n+
@@ -1283,23 +1283,38 @@ namespace MarkdownSharp
                     ((?=^[ ]{{0,{0}}}[^ \t\n])|\Z) # Lookahead for non-space at line-start, or end of doc",
                     _tabWidth), RegexOptions.Multiline | RegexOptions.IgnorePatternWhitespace | RegexOptions.Compiled);
 
+        private static Regex _githubCodeBlock = new Regex(@"
+                    (?<!\\)         # Character before opening ` can't be a backslash
+                    (`{3})          # $1 = Opening run of `
+                    (?<lang>.*?)\n  # $lang = language of the code block
+                    (?<code>.+?)    # $code = The code block
+                    (?<!`)
+                    \1
+                    (?!`)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+
         /// <summary>
         /// /// Turn Markdown 4-space indented code into HTML pre code blocks
         /// </summary>
         private string DoCodeBlocks(string text)
         {
             text = _codeBlock.Replace(text, new MatchEvaluator(CodeBlockEvaluator));
+            text = _githubCodeBlock.Replace(text, new MatchEvaluator(CodeBlockEvaluator));
             return text;
         }
 
         private string CodeBlockEvaluator(Match match)
         {
-            string codeBlock = match.Groups[1].Value;
+            string codeBlock = match.Groups["code"].Value;
 
-            codeBlock = EncodeCode(Outdent(codeBlock));
+            if (!match.Groups["lang"].Success)
+                codeBlock = Outdent(codeBlock);
+            codeBlock = EncodeCode(codeBlock);
             codeBlock = _newlinesLeadingTrailing.Replace(codeBlock, "");
 
-            return string.Concat("\n\n<pre><code>", codeBlock, "\n</code></pre>\n\n");
+            if (match.Groups["lang"].Success)
+                return string.Concat("\n\n<pre><code class=\"", match.Groups["lang"].Value, "\">", codeBlock, "\n</code></pre>\n\n");
+            else
+                return string.Concat("\n\n<pre><code>", codeBlock, "\n</code></pre>\n\n");
         }
 
         private static Regex _codeSpan = new Regex(@"
@@ -1308,7 +1323,7 @@ namespace MarkdownSharp
                     (.+?)     # $2 = The code block
                     (?<!`)
                     \1
-                    (?!`)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline | RegexOptions.Compiled);
+                    (?!`)", RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline | RegexOptions.Compiled);
 
         /// <summary>
         /// Turn Markdown `code spans` into HTML code tags
