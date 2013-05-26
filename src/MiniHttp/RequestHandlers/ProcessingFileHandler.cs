@@ -11,7 +11,7 @@ namespace MiniHttp.RequestHandlers
 {
     public class ProcessingFileHandler : IProcessingHandler
     {
-        private readonly IUrlMapper _urlMapper;
+        protected readonly IUrlMapper _urlMapper;
         private readonly List<Func<IProcessor>> _processorFactories;
 
 		public ProcessingFileHandler(IUrlMapper urlMapper)
@@ -50,7 +50,7 @@ namespace MiniHttp.RequestHandlers
 
         #region IRequestHandler Members
 
-        public bool HandleRequest(RequestContext context)
+        public virtual bool HandleRequest(RequestContext context)
         {
             var file = _urlMapper.MapUrlToFile(context.Url.GetPath());
             if (!file.Exists)
