@@ -4,7 +4,13 @@ This is a very minimalistic HTTP server meant for developers. It is written pure
 
 ## Binaries
 
-[test link](index)
+```ruby
+require 'redcarpet'
+markdown = Redcarpet.new("Hello World!")
+puts markdown.to_html
+```
+
+[test link](code-samples)
 
 If you're only interested in the compiled binaries, you can find the latest version here:
 
