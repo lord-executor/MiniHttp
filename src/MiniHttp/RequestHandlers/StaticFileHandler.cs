@@ -15,5 +15,10 @@ namespace MiniHttp.RequestHandlers
 			: base(urlMapper)
         {
         }
+
+        protected override Stream Process(Processing.ISourceResolver resolver, Stream inputStream)
+        {
+            return inputStream;
+        }
     }
 }
