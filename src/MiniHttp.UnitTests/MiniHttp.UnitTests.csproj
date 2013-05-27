@@ -67,6 +67,7 @@
     <Compile Include="RequestHandlers\Processing\Results\ResultFixture.cs" />
     <Compile Include="Server\RouteDefinitionFixture.cs" />
     <Compile Include="Utilities\ServerUrlMapperFixture.cs" />
+    <Compile Include="Utilities\UrlPathFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\MiniHttp\MiniHttp.csproj">

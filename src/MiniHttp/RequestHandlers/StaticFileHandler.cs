@@ -16,9 +16,9 @@ namespace MiniHttp.RequestHandlers
         {
         }
 
-        protected override Stream Process(FileInfo input)
+        protected override Stream Process(Processing.ISourceResolver resolver, Stream inputStream)
         {
-            return input.OpenRead();
+            return inputStream;
         }
     }
 }

@@ -12,7 +12,7 @@ namespace MiniHttp.Utilities
 	public class ServerUrlMapperFixture
 	{
         private static readonly DirectoryInfo WebRoot = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "testroot"));
-		private static readonly IEnumerable<string> Paths = new[] { "/", "/test/", "/test/file.txt" };
+		private static readonly IEnumerable<string> Paths = new[] { "/", "/test", "/test/file.txt" };
 
         [TestFixtureSetUp]
         public void FixtureSetUp()
@@ -67,10 +67,10 @@ namespace MiniHttp.Utilities
 			foreach (var path in Paths)
 			{
 				builder.Path = path;
-				var file = mapper.MapUrlToFile(builder.Uri);
+				var file = mapper.MapUrlToFile(builder.Uri.GetPath());
 				Assert.AreEqual(Path.GetFullPath(Path.Combine(WebRoot.FullName, path.Substring(1))), file.FullName);
 
-				var dir = mapper.MapUrlToDirectory(builder.Uri);
+                var dir = mapper.MapUrlToDirectory(builder.Uri.GetPath());
 				Assert.AreEqual(Path.GetFullPath(Path.Combine(WebRoot.FullName, path.Substring(1))), dir.FullName);
 			}
 		}
@@ -82,14 +82,13 @@ namespace MiniHttp.Utilities
 
 			foreach (var path in Paths)
 			{
-				var baseUrl = new UriBuilder("http", "localhost");
 				var file = new FileInfo(Path.Combine(WebRoot.FullName, path.Substring(1)));
 				var dir = new DirectoryInfo(Path.Combine(WebRoot.FullName, path.Substring(1)));
 
-				var url = mapper.MapFileToUrl(file, baseUrl.Uri);
-				Assert.AreEqual(path, url.AbsolutePath);
-				url = mapper.MapFileToUrl(dir, baseUrl.Uri);
-				Assert.AreEqual(path, url.AbsolutePath);
+                var url = mapper.MapFileToUrl(file);
+				Assert.AreEqual(path, url.Path);
+                url = mapper.MapFileToUrl(dir);
+				Assert.AreEqual(path, url.Path);
 			}
 		}
 	}

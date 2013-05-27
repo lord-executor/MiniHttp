@@ -47,7 +47,7 @@ namespace MiniHttp.RequestHandlers
 
         public bool HandleRequest(RequestContext context)
         {
-            var dir = _urlMapper.MapUrlToDirectory(context.Url);
+            var dir = _urlMapper.MapUrlToDirectory(context.Url.GetPath());
             if (!dir.Exists)
                 return false;
 
@@ -99,8 +99,8 @@ namespace MiniHttp.RequestHandlers
 
                 if (_requestUrl.Segments.Length > 1)
                 {
-                    var parent = _mapper.MapFileToUrl(_dir.Parent, _requestUrl);
-                    writer.WriteLine("<li class=\"dir\"><a href=\"{0}\">{1}</a></li>", parent.AbsolutePath, "..");
+                    var parent = _mapper.MapFileToUrl(_dir.Parent);
+                    writer.WriteLine("<li class=\"dir\"><a href=\"{0}\">{1}</a></li>", parent.Path, "..");
                 }
 
                 foreach (var info in _dir.GetDirectories().OrderBy(i => i.Name))
@@ -117,10 +117,10 @@ namespace MiniHttp.RequestHandlers
 
             private void WriteFileSystemInfoItem(TextWriter writer, FileSystemInfo info)
             {
-                var infoUrl = _mapper.MapFileToUrl(info, _requestUrl);
+                var infoPath = _mapper.MapFileToUrl(info);
                 writer.WriteLine("<li class=\"{0}\"><a href=\"{1}\">{2}</a></li>",
                     info.Attributes.HasFlag(FileAttributes.Directory) ? "dir" : "file",
-                    infoUrl.AbsolutePath,
+                    infoPath.Path,
                     info.Name);
             }
         }

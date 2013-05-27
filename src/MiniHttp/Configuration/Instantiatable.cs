@@ -12,6 +12,8 @@ namespace MiniHttp.Configuration
         public virtual TInterface Instantiate(params object[] args)
         {
             var type = Type.GetType(TypeName);
+            if (type == null)
+                throw new Exception(String.Format("Unable to locate type {0}", TypeName));
 
             try
             {

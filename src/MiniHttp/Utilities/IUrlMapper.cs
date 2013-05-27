@@ -8,8 +8,8 @@ namespace MiniHttp.Utilities
 {
 	public interface IUrlMapper
 	{
-		FileInfo MapUrlToFile(Uri url);
-		DirectoryInfo MapUrlToDirectory(Uri url);
-		Uri MapFileToUrl(FileSystemInfo fileOrDir, Uri baseUri);
+		FileInfo MapUrlToFile(UrlPath path);
+		DirectoryInfo MapUrlToDirectory(UrlPath path);
+		UrlPath MapFileToUrl(FileSystemInfo fileOrDir);
 	}
 }

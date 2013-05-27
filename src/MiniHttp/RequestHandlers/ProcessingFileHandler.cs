@@ -11,7 +11,7 @@ namespace MiniHttp.RequestHandlers
 {
     public class ProcessingFileHandler : IProcessingHandler
     {
-        private readonly IUrlMapper _urlMapper;
+        protected readonly IUrlMapper _urlMapper;
         private readonly List<Func<IProcessor>> _processorFactories;
 
 		public ProcessingFileHandler(IUrlMapper urlMapper)
@@ -26,14 +26,13 @@ namespace MiniHttp.RequestHandlers
             return this;
         }
 
-        protected virtual Stream Process(FileInfo input)
+        protected virtual Stream Process(ISourceResolver resolver, Stream inputStream)
         {
-            var resolver = new FileSourceResolver(input);
             var output = new MemoryStream();
             var writer = new StreamWriter(output);
 			var processors = _processorFactories.Select(f => f()).ToList();
 
-            using (var source = new StreamLineSource(input.OpenRead(), resolver))
+            using (var source = new StreamLineSource(inputStream, resolver))
             {
                 var iterator = source.GetLineIterator();
                 while (iterator.MoveNext())
@@ -51,14 +50,14 @@ namespace MiniHttp.RequestHandlers
 
         #region IRequestHandler Members
 
-        public bool HandleRequest(RequestContext context)
+        public virtual bool HandleRequest(RequestContext context)
         {
-            var file = _urlMapper.MapUrlToFile(context.Url);
+            var file = _urlMapper.MapUrlToFile(context.Url.GetPath());
             if (!file.Exists)
                 return false;
             
             context.Response.ContentType = MimeTypes.GetMimeType(file.Extension);
-            using (var content = Process(file))
+            using (var content = Process(new FileSourceResolver(_urlMapper, file), file.OpenRead()))
             {
                 content.CopyTo(context.Response.OutputStream);
             }

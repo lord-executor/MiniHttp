@@ -15,29 +15,32 @@ namespace MiniHttp.Utilities
 			_webRoot = webRoot;
 		}
 
-		public FileInfo MapUrlToFile(Uri url)
+		public FileInfo MapUrlToFile(UrlPath path)
 		{
-			return new FileInfo(Path.Combine(_webRoot.FullName, url.LocalPath.Substring(1)));
+            if (!path.IsAbsolute)
+                throw new Exception(String.Format("can only map absolute paths and '{0}' is not absolute", path));
+
+			return new FileInfo(Path.Combine(_webRoot.FullName, path.Path.Substring(1)));
 		}
 
-		public DirectoryInfo MapUrlToDirectory(Uri url)
+        public DirectoryInfo MapUrlToDirectory(UrlPath path)
 		{
-			return new DirectoryInfo(Path.Combine(_webRoot.FullName, url.LocalPath.Substring(1)));
+            if (!path.IsAbsolute)
+                throw new Exception(String.Format("can only map absolute paths and '{0}' is not absolute", path));
+
+			return new DirectoryInfo(Path.Combine(_webRoot.FullName, path.Path.Substring(1)));
 		}
 
-		public Uri MapFileToUrl(FileSystemInfo file, Uri baseUri)
+		public UrlPath MapFileToUrl(FileSystemInfo file)
 		{
 			if (!file.FullName.StartsWith(_webRoot.FullName))
 				throw new InvalidOperationException("File path must refer to a path in the webroot");
 
             var path = file.FullName.Substring(_webRoot.FullName.Length);
-            if ((int)file.Attributes != -1 && file.Attributes.HasFlag(FileAttributes.Directory) && !path.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                path = String.Format("{0}{1}", path, Path.DirectorySeparatorChar);
-
-			if (baseUri == null)
-                return new Uri(path, UriKind.Relative);
-
-            return new Uri(baseUri, path);
+            if (path == String.Empty)
+                path = "/";
+            
+            return new UrlPath(path.Replace(Path.DirectorySeparatorChar, '/'));
 		}
 	}
 }
