@@ -46,14 +46,14 @@ Task CompileLibrary -Depends Init,AssemblyInfo {
 	Exec { &$csc /noconfig "@$paramsFile" "$tmpDir\AssemblyInfo.cs" }
 }
 
-Task CompilePlugins -Depends Init,AssemblyInfo {
+Task CompilePlugins -Depends Init,AssemblyInfoPlugins {
 	$proj = Join-Path $rootPath "src/MiniHttp.Plugins/MiniHttp.Plugins.csproj"
 	$projPath = Split-Path $proj
 	$outName = "MiniHttp.Plugins.dll"
 	$paramsFile = Join-Path $tmpDir "$outName.compile"
 	
 	Exec { &$xslt $proj $projTransform -o "$paramsFile" ProjectPath="$projPath" OutputName="$outName" OutputDir="$outputDir" Debug="false" OutputType="library" }
-	Exec { &$csc /noconfig /r:"$outputDir/MiniHttp.exe" "@$paramsFile" "$tmpDir\AssemblyInfo.cs" }
+	Exec { &$csc /noconfig /r:"$outputDir/MiniHttp.exe" "@$paramsFile" "$tmpDir\AssemblyInfo.Plugins.cs" }
 }
 
 Task AssemblyInfo -Depends Init {
@@ -64,6 +64,16 @@ Task AssemblyInfo -Depends Init {
 	Foreach-Object { $_ -replace "@VERSION", "$version"} | `
 	Foreach-Object { $_ -replace "@COMMIT", "$commit"} | `
 	Set-Content "$tmpDir\AssemblyInfo.cs"
+}
+
+Task AssemblyInfoPlugins -Depends Init {
+	$version = Get-Content "$rootPath/src/MiniHttp/version.txt"
+	$commit = git show HEAD --format="%H from %ai" | Select -First 1
+	
+	Get-Content "$rootPath/build/AssemblyInfo.Plugins.Template.cs" | `
+	Foreach-Object { $_ -replace "@VERSION", "$version"} | `
+	Foreach-Object { $_ -replace "@COMMIT", "$commit"} | `
+	Set-Content "$tmpDir\AssemblyInfo.Plugins.cs"
 }
 
 Task CompileTests -Depends Init,CompileFull,PrepareTests {
