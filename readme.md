@@ -4,7 +4,4 @@ This is a very minimalistic HTTP server meant for developers. It is written pure
 
 ## Binaries
 
-If you're only interested in the compiled binaries, you can find the latest version here:
-* [MiniHttp 0.5.5](https://www.dropbox.com/s/6l709oyhd9ligvm/MiniHttp-0.5.5.7z)
-and you can find all releases here:
-* [MiniHttp Releases](https://www.dropbox.com/sh/vnx55yek7umlrya/A6NM1v_a7a)
+If you're only interested in the compiled binaries, you can find download links on the [Wiki Home Page](https://github.com/lord-executor/MiniHttp/wiki#downloads)
