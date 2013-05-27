@@ -15,7 +15,7 @@ COMMIT := $(shell git show HEAD --format="%H from %ai" | head -n 1)
 #   replace '\' with '/'
 PARAM_REPLACE := sed -e 's/^\//-/' -e 's/\\/\//g'
 
-build: clean compile-full compile-mini compile-lib
+build: clean compile-full compile-mini compile-lib compile-plugins
 
 compile-full: init assembly-info MiniHttp.exe.compile
 	$(CSC) -noconfig @"$(TMP_DIR)/MiniHttp.exe.compile" "$(TMP_DIR)/AssemblyInfo.cs"
