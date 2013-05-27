@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<server port="42">
+  <preHook type="pre-hook-type" />
+  <postHook type="post-hook-type" />
+  <route expression="*.html" type="MiniHttp.Configuration.DummyHandler, MiniHttp.UnitTests" />
+  <route expression="*.txt" type="MiniHttp.Configuration.DummyHandlerWithMapper, MiniHttp.UnitTests" />
+  <route expression="*.test" type="MiniHttp.Configuration.DummyHandlerWithProcessors, MiniHttp.UnitTests">
+    <processor type="MiniHttp.Configuration.DummyProcessor, MiniHttp.UnitTests" />
+    <processor type="MiniHttp.Configuration.DummyProcessor, MiniHttp.UnitTests" />
+  </route>
+</server>

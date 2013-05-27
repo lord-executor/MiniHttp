@@ -8,7 +8,6 @@ TODO:
   - processors
     - template processor
 	- variable processor
-- configuration of the server through a file in the webroot where it is started
 - simple virtulaizing handler for use with e.g. markdown to load a template with parameters depending on the virtual resource
 - dynamic plugin loading
 - Mono support
@@ -16,6 +15,7 @@ TODO:
 - code comments
 
 DONE:
+- configuration of the server through a file in the webroot where it is started
 - fixing line source enumerator for recursive templates
 - return plain text exception information for failed requests
 - request preprocessor for .../ -> .../index.{something}

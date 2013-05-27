@@ -13,6 +13,7 @@ namespace MiniHttp
 
 		public string WebRoot { get; private set; }
 		public int Port { get; private set; }
+        public bool ExplicitPort { get; private set; }
 
 		private Arguments()
 		{
@@ -21,7 +22,7 @@ namespace MiniHttp
 			_options = new OptionSet()
 			{
 				{ "r|root=", "the web-root path (default: current directory)", v => WebRoot = v },
-				{ "p|port=", "the port on which to run the server (default: 8888)", (int v) => Port = v },
+				{ "p|port=", "the port on which to run the server (default: 8888)", (int v) => { ExplicitPort = true; Port = v; } },
 			};
 		}
 
