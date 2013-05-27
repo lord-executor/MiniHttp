@@ -6,10 +6,13 @@ XSLT := xsltproc
 TRANSFORM := $(shell readlink -f "$(MAKEFILE_PATH)/transform.xslt")
 CSC := mono-csc
 OUTPUT_DIR := $(shell readlink -f "$(MAKEFILE_PATH)/../bin")
-TMP_DIR := $(shell readlink -f "$(OUTPUT_DIR)/tmp")
-TEST_DIR := $(shell readlink -f "$(OUTPUT_DIR)/test")
+TMP_DIR := $(shell readlink -m "$(OUTPUT_DIR)/tmp")
+TEST_DIR := $(shell readlink -m "$(OUTPUT_DIR)/test")
 VERSION := $(shell cat "$(MAKEFILE_PATH)/../src/MiniHttp/version.txt")
 COMMIT := $(shell git show HEAD --format="%H from %ai" | head -n 1)
+# sed replacements after the XSLT transform
+#   replace '/' for csc switches (windows) with '-' for mono csc
+#   replace '\' with '/'
 PARAM_REPLACE := sed -e 's/^\//-/' -e 's/\\/\//g'
 
 build: clean compile-full compile-mini compile-lib
@@ -22,6 +25,9 @@ compile-mini: init assembly-info MiniHttp.Minimal.exe.compile
 
 compile-lib: init assembly-info MiniHttp.dll.compile
 	$(CSC) -noconfig @"$(TMP_DIR)/MiniHttp.dll.compile" "$(TMP_DIR)/AssemblyInfo.cs"
+
+compile-plugins: init assembly-info-plugins MiniHttp.Plugins.dll.compile
+	$(CSC) -noconfig -r:"$(OUTPUT_DIR)/MiniHttp.exe" @"$(TMP_DIR)/MiniHttp.Plugins.dll.compile" "$(TMP_DIR)/AssemblyInfo.Plugins.cs"
 
 MiniHttp.exe.compile: init
 	$(XSLT) --stringparam ProjectPath "$(PROJ_PATH)"\
@@ -62,10 +68,25 @@ MiniHttp.UnitTests.dll.compile: init
 		 | $(PARAM_REPLACE)\
 		 > $(TMP_DIR)/MiniHttp.UnitTests.dll.compile
 
+MiniHttp.Plugins.dll.compile: init
+	$(XSLT) --stringparam ProjectPath "$(ROOT_PATH)/src/MiniHttp.Plugins"\
+		--stringparam OutputDir "$(OUTPUT_DIR)"\
+		--stringparam Debug "false"\
+		--stringparam OutputName "MiniHttp.Plugins.dll"\
+		--stringparam OutputType "library"\
+		 $(TRANSFORM) "$(ROOT_PATH)/src/MiniHttp.Plugins/MiniHttp.Plugins.csproj"\
+		 | $(PARAM_REPLACE)\
+		 > $(TMP_DIR)/MiniHttp.Plugins.dll.compile
+
 assembly-info: init
 	cat $(MAKEFILE_PATH)/AssemblyInfo.Template.cs\
 		| sed -e 's/@VERSION/$(VERSION)/' -e 's/@COMMIT/$(COMMIT)/'\
 		> $(TMP_DIR)/AssemblyInfo.cs
+
+assembly-info-plugins: init
+	cat $(MAKEFILE_PATH)/AssemblyInfo.Plugins.Template.cs\
+		| sed -e 's/@VERSION/$(VERSION)/' -e 's/@COMMIT/$(COMMIT)/'\
+		> $(TMP_DIR)/AssemblyInfo.Plugins.cs
 
 prepare-tests: init compile-full
 	cp "$(ROOT_PATH)/lib/nunit.framework.dll" $(TEST_DIR)
